@@ -1,0 +1,673 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>PAM 扫描控制手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column (~72ch) of lab-notebook sections; wide tables and code scroll inside their own boxes */
+:root {
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --ink: #1d2328;
+  --muted: #5d6870;
+  --line: #d9dee2;
+  --accent: #0e6b8c;
+  --accent-soft: #e3f0f5;
+  --warn: #9a5b00;
+  --warn-soft: #fbf1e1;
+  --ok: #2e7d4f;
+  --code-bg: #f1f3f5;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14181b; --surface: #1b2024; --ink: #e3e8eb; --muted: #9aa6ae; --line: #2e363c;
+    --accent: #5cb8d8; --accent-soft: #16303a; --warn: #f0b45c; --warn-soft: #33281a;
+    --ok: #6fcf97; --code-bg: #111518; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14181b; --surface: #1b2024; --ink: #e3e8eb; --muted: #9aa6ae; --line: #2e363c;
+  --accent: #5cb8d8; --accent-soft: #16303a; --warn: #f0b45c; --warn-soft: #33281a;
+  --ok: #6fcf97; --code-bg: #111518; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.75; padding-inline: 16px; padding-block: 32px 64px; }
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 40px; }
+header { display: grid; gap: 8px; border-bottom: 2px solid var(--ink); padding-bottom: 20px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
+h1 { font-size: clamp(26px, 5vw, 34px); line-height: 1.25; margin: 0; font-weight: 700; text-wrap: balance; }
+h2 { font-size: 21px; margin: 0; font-weight: 700; display: flex; gap: 10px; align-items: baseline; text-wrap: balance; }
+h2 .n { font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 500; }
+h3 { font-size: 16px; margin: 8px 0 0; font-weight: 700; }
+p { margin: 0; max-width: 70ch; }
+.lead { color: var(--muted); max-width: 70ch; }
+section { display: grid; gap: 14px; min-width: 0; }
+ul, ol { margin: 0; padding-left: 1.3em; display: grid; gap: 6px; max-width: 72ch; }
+code { font-family: var(--font-mono); font-size: .88em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: 12.5px; letter-spacing: .03em; background: var(--code-bg); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.note { border: 1px solid var(--line); border-left: 4px solid var(--warn); border-radius: 0; background: var(--warn-soft); padding: 12px 16px; display: grid; gap: 6px; }
+.note strong { color: var(--warn); }
+.status { display: inline-block; font-size: 12px; font-weight: 500; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.s-ok { background: var(--accent-soft); color: var(--ok); }
+.s-todo { background: var(--warn-soft); color: var(--warn); }
+.codebox { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); min-width: 0; overflow: hidden; }
+.codebar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line); background: var(--code-bg); }
+.codebar span { font-family: var(--font-mono); font-size: 13px; overflow-wrap: anywhere; }
+button.copy { font: inherit; font-size: 13px; padding: 4px 12px; border: 1px solid var(--accent); color: var(--accent); background: transparent; border-radius: 6px; cursor: pointer; }
+button.copy:hover { background: var(--accent-soft); }
+button.copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+pre.code { margin: 0; padding: 14px 16px; overflow: auto; max-height: 520px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.6; background: var(--surface); tab-size: 4; }
+pre.prompt { margin: 0; padding: 14px 16px; white-space: pre-wrap; font-family: var(--font-body); font-size: 14px; line-height: 1.7; background: var(--surface); }
+pre.mermaid { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 0; }
+.chain { font-family: var(--font-mono); font-size: 13px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto; white-space: pre; margin: 0; line-height: 1.7; }
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">CAO LAB · PAM 系统 · 2026-10-03</div>
+  <h1>PAM 扫描控制手册</h1>
+  <p class="lead">用 MATLAB 通过 NI PCIe-6323 + BNC-2110 控制卓立汉光电动滑台、激光触发和 ATS9462 采集。本页汇总硬件配置、接线、已验证的结论、踩过的坑和当前代码，可以直接交给另一台电脑上的 Claude 继续工作。</p>
+</header>
+
+<section id="handoff">
+  <h2><span class="n">00</span>交给 Claude 的开场白</h2>
+  <p>在另一台电脑上新开一个 Claude 会话，把下面整段复制进去，再附上本页链接或要修改的代码。</p>
+  <div class="codebox">
+    <div class="codebar"><span>handoff prompt</span><button class="copy" type="button" data-target="prompt-text" id="copy-prompt">复制</button></div>
+    <pre class="prompt" id="prompt-text">我在做光声显微（PAM）扫描系统的 MATLAB 控制，下面是之前和 Claude 一起确认过的背景，请在此基础上继续：
+
+【硬件】实验室电脑：Windows 11、i5-14400F、64 GB、RTX 4060、MATLAB R2024b（含 Data Acquisition Toolbox + NI-DAQmx 支持包）、NI-DAQmx 24.5、LabVIEW 2024。
+- NI PCIe-6323（设备名 Dev1）：32 AI（±0.2/1/5/10 V，16 位，总 250 kS/s）、4 AO（±10 V）、48 DIO、4 个 32 位计数器。
+- BNC-2110 接在 6323 的 CONNECTOR 0（AI 0–15），可用：AI0–7（差分）、AO0/1、P0.0–P0.7、PFI 端子。
+- AlazarTech ATS9462 数字化仪（2 通道、16 位、180 MS/s），外部触发 TRIG IN。
+- 卓立汉光 CXPF50-80100 电动滑台：行程 50 mm，导程 2 mm，二相步进电机 SST43D2126-10（1.7 A/相，1.8°），最大 20 mm/s。
+- 鸣志 SR2 步进驱动器：STEP/DIR 为共阳极低电平有效输入（COM+、STEP、DIR、EN），STEP 下降沿走一步，EN 悬空 = 使能。
+
+【接线】BNC-2110 +5V → SR2 COM+；P0.0 → STEP；P0.1 → DIR；EN 不接。LabVIEW DO 位分配：Bit0 X STEP、Bit1 X DIR、Bit2 Y STEP、Bit3 Y DIR、Bit4 Z STEP、Bit5 Z DIR、Bit6 DAQ 触发（→ ATS TRIG IN，待确认）、Bit7 激光触发（待确认）。
+
+【已验证】MATLAB 用硬件定时数字输出（N×列 的 0/1 矩阵，每列一条线、每行一个采样点）控制电机，滑台已能移动、换向。
+- MATLAB daq 工具箱的定时数字输出必须在同一个 daq 对象里加一个模拟通道借时钟（我们加 ai1 输入，用 readwrite），否则报 "clock ... is not configured"；AI 时钟上限 250 kS/s。
+- "Hardware is reserved"：先 clear 旧 daq 对象 + daqreset，并关闭 LabVIEW。
+- 计数器 ctr0 固定输出到 PFI12（P2.4），Python 脚本用它触发 ATS；P0.0 不是 PFI，计数器到不了。
+- 每脉冲距离 = 2000 µm / SR2 每转步数（20 细分时 0.5 µm）；SR2 细分需按拨码/实测校准。
+
+【代码】test2.m：输入带正负号的 MOVE_UM 和速度移动滑台。bscan_test.m：加速-匀速-减速-返回，匀速段每 K 步同时发 DAQ 触发和激光触发，ATS9462 每触发采一条 A-line（ATS 部分尚未在硬件上测试）。
+
+【下一步】确认 P0.6→ATS TRIG IN、P0.7→激光；校准 STEPS_PER_REV；先 LASER_ENABLE=false 跑 bscan_test 测通电机 + ATS，再开激光。
+如果当前这台电脑没有连接这些硬件，请只做代码修改和分析，不要假设能运行硬件。</pre>
+  </div>
+</section>
+
+<section id="hardware">
+  <h2><span class="n">01</span>硬件清单</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>设备</th><th>型号 / 名称</th><th>要点</th></tr></thead>
+    <tbody>
+      <tr><td>电脑</td><td>MSI Codex R2 台式机</td><td>i5-14400F（10 核 16 线程），64 GB DDR5，RTX 4060，Kingston 1 TB NVMe，Windows 11 Home</td></tr>
+      <tr><td>多功能采集卡</td><td>NI PCIe-6323，<code>Dev1</code></td><td>PCI 总线 4，PCIe x1 Gen1；32 AI / 4 AO / 48 DIO / 4 计数器（100 MHz 时基）</td></tr>
+      <tr><td>接线盒</td><td>NI BNC-2110</td><td>无源，接 CONNECTOR 0（AI 0–15）；CONNECTOR 1 目前空着</td></tr>
+      <tr><td>高速数字化仪</td><td>AlazarTech ATS9462</td><td>2 通道，16 位，180 MS/s；外部触发 ETR ±5 V，阈值代码 150 ≈ 0.87 V</td></tr>
+      <tr><td>电动滑台</td><td>卓立汉光 CXPF50-80100</td><td>行程 50 mm，台面 80×100 mm，导程 2 mm，整步 10 µm，最大 20 mm/s，内置正负限位和零位</td></tr>
+      <tr><td>步进电机</td><td>信浓 SST43D2126-10</td><td>二相，1.8°/步，1.7 A/相，2.8 V</td></tr>
+      <tr><td>步进驱动器</td><td>鸣志 SR2</td><td>电源 12–48 VDC；STEP/DIR 光耦输入 5–24 V，共阳极低电平有效；STEP 下降沿走一步；运行电流不要超过 1.7 A</td></tr>
+      <tr><td>USB 转串口</td><td>Prolific PL2303GT（COM4）</td><td>与 BNC-2110 无关，接的是另一台仪器</td></tr>
+      <tr><td>软件</td><td>MATLAB R2024b，NI-DAQmx 24.5，LabVIEW 2024 Q3，NI MAX，ATS-SDK 23.3.0</td><td>MATLAB 已装 NI-DAQmx 硬件支持包；Python 3.13/3.14 环境有 <code>nidaqmx</code></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="chain">
+  <h2><span class="n">02</span>信号是怎么走的</h2>
+  <pre class="chain">控制：MATLAB 数组 → NI-DAQmx 驱动 → PCIe → 6323（DO / DAC）→ 68 针电缆 → BNC-2110 端子
+       → STEP/DIR → SR2 驱动器（放大成 1.7 A 相电流）→ 电机 → 滚珠丝杠 → 滑台
+       → P0.7 → 激光外触发
+       → P0.6 → ATS9462 TRIG IN → 采一条 A-line → DMA → MATLAB
+
+读取：传感器电压 → BNC-2110 AI → 6323 多路开关 → 放大器 → 16 位 ADC → PCIe → 驱动 → MATLAB（单位 V）</pre>
+  <ul>
+    <li>BNC 线和端子里传的只有电压，含义由两端设备和换算系数决定。</li>
+    <li>NI-DAQmx 是驱动（<code>C:\Windows\System32\nicaiu.dll</code> + 内核驱动 + 后台服务）；PCIe 是主板上的硬件通道。</li>
+    <li>MATLAB 里画的"计划时序图"是由矩阵算出来的，不是实测。没接信号的 AI 通道读数是悬空乱值（例如 6.7 V 附近或缓慢漂移）。</li>
+  </ul>
+</section>
+
+<section id="wiring">
+  <h2><span class="n">03</span>接线</h2>
+  <h3>BNC-2110 → SR2 驱动器（共阳极接法）</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>BNC-2110 端子</th><th>SR2 端子</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td><code>+5V</code></td><td>COM+</td><td>给 STEP/DIR 两个光耦供电</td></tr>
+      <tr><td><code>P0.0</code></td><td>STEP</td><td>P0.0 拉低时光耦导通；下降沿走一步</td></tr>
+      <tr><td><code>P0.1</code></td><td>DIR</td><td>高/低决定方向</td></tr>
+      <tr><td>不接</td><td>EN</td><td>悬空 = 使能</td></tr>
+      <tr><td>直流电源 12–48 V</td><td>V+ / V−</td><td>驱动器电源</td></tr>
+      <tr><td>滑台 DB9</td><td>A+ A− B+ B−</td><td>针脚定义见 <code>CXP Motorized stage.pdf</code> 第 5 页；断电后对调 A+/A− 可整体反转方向</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>更正</strong><p>SR2 没有 STEP−/DIR− 端子，不需要从 D GND 拉线到驱动器。回路是 +5V → COM+ → 光耦 → STEP → P0.0 → 采集卡地。最初电机不动就是按差分思路接线导致的。</p></div>
+  <h3>Dev1 port0 位分配（来自 LabVIEW，bscantest.m 注释）</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>线</th><th>用途</th><th>状态</th></tr></thead>
+    <tbody>
+      <tr><td><code>port0/line0</code> P0.0</td><td>X STEP</td><td><span class="status s-ok">已接线并验证</span></td></tr>
+      <tr><td><code>port0/line1</code> P0.1</td><td>X DIR</td><td><span class="status s-ok">已接线并验证</span></td></tr>
+      <tr><td><code>port0/line2–5</code></td><td>Y STEP、Y DIR、Z STEP、Z DIR</td><td><span class="status s-todo">未核对</span></td></tr>
+      <tr><td><code>port0/line6</code> P0.6</td><td>DAQ 触发 → ATS9462 TRIG IN</td><td><span class="status s-todo">待确认</span></td></tr>
+      <tr><td><code>port0/line7</code> P0.7</td><td>激光触发</td><td><span class="status s-todo">待确认</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>其他端子</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>端子</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>PFI12（P2.4）</td><td>ctr0 默认输出。Python <code>control card</code> 脚本用它产生 ATS 触发</td></tr>
+      <tr><td>PFI13 / PFI14 / PFI15</td><td>ctr1 / ctr2 / ctr3 默认输出</td></tr>
+      <tr><td>PFI3（P1.3）</td><td>ctr1 计数输入。把 P0.0 并接到这里可实测发出的脉冲数（<code>COUNT_CHECK</code>）</td></tr>
+      <tr><td>USER 1 端子 + BNC</td><td>把 P0.0 接到 USER 1 端子，再用 BNC 线接示波器或 AI 1，可看实际 STEP 波形</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="numbers">
+  <h2><span class="n">04</span>运动换算</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>SR2 每转步数</th><th>每脉冲距离</th><th>20 mm/s 对应步频</th></tr></thead>
+    <tbody>
+      <tr><td class="num">200（整步）</td><td class="num">10 µm</td><td class="num">2 kHz</td></tr>
+      <tr><td class="num">4000（20 细分，代码默认）</td><td class="num">0.5 µm</td><td class="num">40 kHz</td></tr>
+      <tr><td class="num">8000（40 细分）</td><td class="num">0.25 µm</td><td class="num">80 kHz</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>每脉冲距离 = 2000 µm ÷ 每转步数；距离 = 脉冲数 × 每脉冲距离；速度 = 步频 × 每脉冲距离。</li>
+    <li>bscantest.m 里 <code>kx = 0.25</code>，在 2 mm 导程上对应 40 细分，和代码默认的 20 细分不一致。以 SR2 拨码或实测为准，修改 <code>STEPS_PER_REV</code>。</li>
+    <li>B-scan：扫描速度 = A-line 间距 × 触发频率；A-line 间距必须是每脉冲距离的整数倍。</li>
+  </ul>
+</section>
+
+<section id="lessons">
+  <h2><span class="n">05</span>MATLAB 要点和踩过的坑</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>现象 / 问题</th><th>原因</th><th>处理</th></tr></thead>
+    <tbody>
+      <tr><td><code>Cannot start because the clock for digital output channel ... is not configured</code></td><td>MATLAB daq 工具箱要求定时数字输出借用同一对象里模拟通道的时钟</td><td>同一个 <code>daq</code> 对象里加 <code>addinput(dq,"Dev1","ai1","Voltage")</code>，用 <code>readwrite</code>；上限 250 kS/s。要更快可改用空闲的 AO2/AO3 当时钟</td></tr>
+      <tr><td><code>Hardware is reserved</code></td><td>旧的 daq 对象（命令行的 <code>d</code>、上次的 <code>dq</code>）或 LabVIEW 占着 Dev1</td><td><code>clear d dq cnt; daqreset</code>，并完全关闭 LabVIEW；脚本结束后 <code>clear dq</code></td></tr>
+      <tr><td>脚本运行了但电机不动</td><td><code>RUN_HARDWARE = false</code> 是检查模式；或 SR2 接线、电源、细分问题</td><td>看到"完成：已发送 N 个脉冲"才表示真正输出；用示波器或计数回环确认</td></tr>
+      <tr><td>想用 ctr0 发 STEP</td><td>ctr0 只能输出到 PFI12，P0.0 不是 PFI；ctr0 已被 Python 用于 ATS 触发；daq 工具箱的计数器输出无法保证精确脉冲数</td><td>继续用 port0 定时数字输出；若必须用计数器，选 ctr1 → PFI13，并用 NI .NET 的有限脉冲串</td></tr>
+      <tr><td>方向始终不变</td><td>脚本里 <code>DIRECTION</code> 被后面一行覆盖</td><td>改用带正负号的 <code>MOVE_UM</code>，方向自动计算；<code>POSITIVE_DIR</code> 决定正方向</td></tr>
+      <tr><td>MATLAB 里没法 <code>daq("ni")</code></td><td>缺少 NI-DAQmx 硬件支持包</td><td>已安装 "Data Acquisition Toolbox Support Package for National Instruments NI-DAQmx Devices"</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>安全</strong><p>滑台只有 50 mm 行程，程序不知道当前位置。每次运行前估算移动距离并留余量，脚本里的 <code>MAX_MOVE_UM</code> / <code>MAX_TRAVEL_UM</code> 会拦住过大的移动。P0.7 接激光，<code>LASER_ENABLE = true</code> 之前确认激光处于安全状态。</p></div>
+</section>
+
+<section id="status">
+  <h2><span class="n">06</span>进度和下一步</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>项目</th><th>状态</th></tr></thead>
+    <tbody>
+      <tr><td>MATLAB 读取 AI（官方 daq 写法）</td><td><span class="status s-ok">已验证</span></td></tr>
+      <tr><td>MATLAB 定时数字输出（AI 借时钟）</td><td><span class="status s-ok">已验证</span></td></tr>
+      <tr><td>test2.m 移动滑台、换向</td><td><span class="status s-ok">已验证，滑台能动</span></td></tr>
+      <tr><td>校准 STEPS_PER_REV（实测 1 mm 指令的实际位移）</td><td><span class="status s-todo">待做</span></td></tr>
+      <tr><td>确认 P0.6 → ATS TRIG IN、P0.7 → 激光，以及激光触发要求</td><td><span class="status s-todo">待做</span></td></tr>
+      <tr><td>bscan_test.m 检查模式（时序、位置）</td><td><span class="status s-ok">已验证：400 条 A-line，间距 5.00 µm，回到起点</span></td></tr>
+      <tr><td>bscan_test.m 电机 + ATS（不开激光）</td><td><span class="status s-todo">未在硬件上运行</span></td></tr>
+      <tr><td>bscan_test.m 开激光采真实 B-scan</td><td><span class="status s-todo">待做</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="code">
+  <h2><span class="n">07</span>代码</h2>
+  <p>两份脚本默认都是检查模式（<code>RUN_HARDWARE = false</code>），只计算和画图。确认参数后再改成 <code>true</code>。</p>
+  <h3>test2.m：按距离移动滑台</h3>
+  <p>每次只改 <code>MOVE_UM</code>（µm，正负决定方向）和 <code>SPEED_MM_S</code>。</p>
+  <div class="codebox">
+    <div class="codebar"><span>test2.m</span><button class="copy" type="button" data-target="code-test2" id="copy-test2">复制</button></div>
+    <pre class="code" id="code-test2">%% 步进电机移动测试：Dev1 数字线输出 STEP/DIR → 鸣志 SR2 驱动器 → 卓立汉光 CXPF50-80100 电动滑台
+%
+%  原理：SR2 在 STEP 线的每个下降沿走一步（一个微步）；DIR 线高/低决定方向。
+%        移动距离 = 脉冲数 × 每个脉冲的距离；速度 = 脉冲频率 × 每个脉冲的距离。
+%        脉冲由采集卡按硬件时钟产生，个数和间隔是精确的。
+%
+%  CXPF50-80100：行程 50 mm，丝杠导程 2 mm，电机 200 整步/转 → 整步 10 um，最大速度 20 mm/s
+%
+%  使用前必须确认：
+%   1. SR2 拨码开关的细分（每转步数），算出 UM_PER_PULSE
+%   2. 滑台在行程中间，留有余量；已关闭占用 Dev1 的 LabVIEW 程序；激光处于安全状态
+
+RUN_HARDWARE = false;              % false：只计算并画图；确认无误后再改成 true
+COUNT_CHECK  = false;              % true：用 ctr1 实测发出的脉冲数，需先用导线把 P0.0 并接到 P1.3 (PFI3)
+
+%% 1. 每次移动只改这两行
+MOVE_UM    = -1000;                 % 移动距离 um：正数 = 一个方向，负数 = 反方向
+SPEED_MM_S = 1;                    % 移动速度 mm/s（上限 20）
+
+%% 2. 硬件参数（接线和驱动器设置不变时不用改）
+STEP_LINE     = "port0/line0";     % P0.0 → SR2 STEP
+DIR_LINE      = "port0/line1";     % P0.1 → SR2 DIR
+POSITIVE_DIR  = 1;                 % MOVE_UM 为正时 DIR 输出的电平；方向反了就改成 0
+STEPS_PER_REV = 200 * 20;          % SR2 细分设置：整步 200 x 细分数（请按拨码核对）
+UM_PER_PULSE  = 2000 / STEPS_PER_REV;  % 导程 2000 um / 每转脉冲数；20 细分时 = 0.5 um
+MAX_SPEED_MM_S = 20;               % CXPF 最大速度 20 mm/s
+MAX_MOVE_UM    = 20000;            % 单次移动上限 20 mm（行程 50 mm），防止误输入撞到两端
+CLOCK_AI       = "ai1";            % 给数字输出提供时钟的 AI 通道（只读，不输出）
+
+%% 3. 由距离和速度换算出方向、脉冲数、脉冲频率
+assert(abs(MOVE_UM) &lt;= MAX_MOVE_UM, '单次移动 %.0f um 超过上限 %.0f um。', MOVE_UM, MAX_MOVE_UM);
+assert(SPEED_MM_S &gt; 0 &amp;&amp; SPEED_MM_S &lt;= MAX_SPEED_MM_S, '速度必须在 0 ~ %g mm/s 之间。', MAX_SPEED_MM_S);
+if MOVE_UM &gt;= 0
+    DIRECTION = POSITIVE_DIR;
+else
+    DIRECTION = 1 - POSITIVE_DIR;
+end
+N_PULSES  = round(abs(MOVE_UM) / UM_PER_PULSE);
+STEP_FREQ = SPEED_MM_S * 1000 / UM_PER_PULSE;   % Hz
+
+fs = min(250e3, 20 * STEP_FREQ);   % 采样率：每个脉冲 20 行；AI 时钟上限 250 kS/s
+DIR_SETUP = 100e-6;                % 先设好方向，再开始发脉冲
+%% 4. 生成时序矩阵：列 1 = STEP，列 2 = DIR
+period = round(fs / STEP_FREQ);              % 每个脉冲周期的行数
+high   = max(1, round(period / 2));          % 50% 占空比
+lead   = round(DIR_SETUP * fs);
+N      = lead + N_PULSES * period + 1;       % 最后一行全部归零
+
+do = false(N, 2);
+k  = (0:N_PULSES * period - 1)';
+do(lead + 1 : lead + N_PULSES * period, 1) = mod(k, period) &lt; high;
+do(1:end-1, 2) = logical(DIRECTION);
+
+actual_freq = fs / period;
+dist_um  = N_PULSES * UM_PER_PULSE;
+speed_mm = actual_freq * UM_PER_PULSE / 1000;
+fprintf('脉冲数 %d，实际频率 %.1f Hz，用时 %.3f s\n', ...
+    nnz(diff([false; do(:,1)]) == 1), actual_freq, N / fs);
+fprintf('方向 DIR = %d，预计移动 %+.1f um，速度 %.3f mm/s（上限 %g mm/s）\n', ...
+    DIRECTION, sign(MOVE_UM) * dist_um, speed_mm, MAX_SPEED_MM_S);
+assert(speed_mm &lt;= MAX_SPEED_MM_S, '速度超过滑台上限，请降低 STEP_FREQ。');
+
+% 这张图画的是上面算出来、准备发送的矩阵 do，不是从硬件测到的信号
+figure('Name', 'Motor STEP/DIR (planned)', 'Color', 'w');
+show = 1:min(N, lead + 5 * period);
+stairs((show - 1) / fs * 1e3, double(do(show, 1)) * 0.8 + 0); hold on
+stairs((show - 1) / fs * 1e3, double(do(show, 2)) * 0.8 + 1); hold off
+yticks([0.4 1.4]); yticklabels(["STEP" "DIR"]); ylim([-0.2 2]);
+xlabel('Time (ms)'); title('计划发送的前 5 个脉冲（计算值）'); grid on
+
+%% 5. 输出到硬件
+if ~RUN_HARDWARE
+    fprintf('\n*** 检查模式：没有向硬件发送任何信号。要让电机动，把 RUN_HARDWARE 改成 true ***\n');
+    return
+end
+
+% 释放 MATLAB 里之前创建、还占着 Dev1 的 daq 对象（例如命令行里建的 d、上次运行留下的 dq），
+% 否则会报 "Hardware is reserved"。注意：LabVIEW 占用的资源这里释放不了，需要关闭 LabVIEW。
+clear d dq cnt
+daqreset
+
+if COUNT_CHECK
+    cnt = daq("ni");
+    addinput(cnt, "Dev1", "ctr1", "EdgeCount");   % 计数输入在 PFI3 (P1.3)
+    resetcounters(cnt);
+    c0 = read(cnt, "OutputFormat", "Matrix");
+end
+
+% MATLAB 的 daq 工具箱规定：定时数字输出必须借用同一对象里模拟通道的采样时钟。
+% 这里加一个 AI 通道当时钟（只读，不输出任何东西）。
+% 如果把 P0.0 接到 BNC-2110 的 USER 1 端子，再用 BNC 线把 USER 1 接到 AI 1，
+% 采回来的 meas 就是 STEP 线上的真实波形。
+dq = daq("ni");
+dq.Rate = fs;
+ai = addinput(dq, "Dev1", CLOCK_AI, "Voltage");
+ai.TerminalConfig = "Differential";
+addoutput(dq, "Dev1", STEP_LINE, "Digital");
+addoutput(dq, "Dev1", DIR_LINE,  "Digital");
+meas = readwrite(dq, double(do), "OutputFormat", "Matrix");   % meas 只有接了 STEP 回环才有意义
+fprintf('完成：已发送 %d 个脉冲，移动 %+.1f um\n', N_PULSES, sign(MOVE_UM) * dist_um);
+clear dq    % 用完立即释放 Dev1，LabVIEW 或下一次运行才能使用
+
+if COUNT_CHECK
+    c1 = read(cnt, "OutputFormat", "Matrix");
+    fprintf('ctr1 实测上升沿：%d（应为 %d）\n', c1 - c0, N_PULSES);
+end</pre>
+  </div>
+  <h3>bscan_test.m：B-scan（滑台 + 激光触发 + ATS9462）</h3>
+  <p>主要参数：<code>SCAN_LENGTH_UM</code>、<code>DX_UM</code>、<code>TRIG_RATE_HZ</code>。依赖 ATS-SDK 的 MATLAB Include 目录 <code>C:\AlazarTech\ATS-SDK\23.3.0\Samples_MATLAB\Include</code>。</p>
+  <div class="codebox">
+    <div class="codebar"><span>bscan_test.m</span><button class="copy" type="button" data-target="code-bscan" id="copy-bscan">复制</button></div>
+    <pre class="code" id="code-bscan">%% B-scan：X 滑台匀速扫描 + 激光触发 + ATS9462 每个触发采一条 A-line
+%
+%  原理（全部由 Dev1 同一个硬件时钟产生，严格同步）：
+%    P0.0 X STEP   ：加速 → 匀速 → 减速（→ 可选自动返回起点）
+%    P0.1 X DIR    ：扫描方向，返回时翻转
+%    P0.6 DAQ 触发 ：匀速段内每走 K 个脉冲（= DX_UM）发一次 → ATS9462 TRIG IN 采一条 A-line
+%    P0.7 激光触发 ：与 DAQ 触发同一时刻（LASER_ENABLE = false 时不发）
+%  因为触发是按"走了多少步"来发的，每条 A-line 的位置都正好间隔 DX_UM，不会出现 6.25 这类非整数关系。
+%
+%  先用 RUN_HARDWARE = false 检查时序和位置图；
+%  再用 RUN_HARDWARE = true、LASER_ENABLE = false 测通 电机 + ATS 采集（采到的是无激光背景）；
+%  最后确认激光安全后再 LASER_ENABLE = true。
+%  运行前关闭 LabVIEW 和其他占用 Dev1 / ATS9462 的程序；滑台留出 扫描长度 + 2 x 加速距离 的余量。
+
+RUN_HARDWARE    = false;   % false：只生成时序并画图，不碰任何硬件
+LASER_ENABLE    = false;   % false：P0.7 不发激光触发
+RETURN_TO_START = true;    % 扫描完自动以 RETURN_SPEED 退回起点
+SAVE_DATA       = false;   % true：保存到 bscan_data 文件夹
+
+%% 1. 扫描参数
+SCAN_LENGTH_UM    = 2000;  % B-scan 长度
+DX_UM             = 5;     % A-line 间距（必须是 UM_PER_PULSE 的整数倍）
+TRIG_RATE_HZ      = 1000;  % 激光 / 采集触发频率 = 每秒 A-line 数；扫描速度 = DX_UM x TRIG_RATE_HZ
+DIR_SCAN          = 1;     % 扫描时 DIR 电平（1 或 0）
+RAMP_UM           = 200;   % 加速、减速各用多少距离（这段不采数据）
+START_FREQ_HZ     = 500;   % 加速起始步频
+RETURN_SPEED_MM_S = 2;     % 返回速度
+
+%% 2. 硬件参数
+STEP_LINE     = "port0/line0";
+DIR_LINE      = "port0/line1";
+DAQTRIG_LINE  = "port0/line6";      % → ATS9462 TRIG IN（请确认接线）
+LASER_LINE    = "port0/line7";      % → 激光外触发输入（请确认接线和激光的触发要求）
+STEPS_PER_REV = 200 * 20;           % SR2 细分设置（以 test2.m 实测校准过的值为准）
+UM_PER_PULSE  = 2000 / STEPS_PER_REV;
+MAX_SPEED_MM_S = 20;
+MAX_TRAVEL_UM  = 20000;             % 单次扫描总行程上限（滑台行程 50 mm）
+TRIG_WIDTH_S   = 10e-6;             % 触发脉宽
+CLOCK_AI       = "ai1";             % 给数字输出提供时钟的 AI 通道（只读）
+FS_MAX         = 250e3;             % AI 时钟上限
+DIR_SETUP_S    = 100e-6;
+PAUSE_S        = 0.05;              % 扫描结束到返回之间的停顿
+
+% ATS9462（与 ats9462_aline_test_revised.m 一致）
+ATS.samplesPerALine   = 512;        % 每条 A-line 的点数（32 的倍数，&gt;= 256）
+ATS.sampleRate_Hz     = 180e6;
+ATS.inputRange_V      = 4;          % 0.2 / 0.4 / 0.8 / 2 / 4
+ATS.triggerLevelCode  = 150;        % ETR_5V 下约 0.87 V
+ATS.triggerDelay      = 0;          % ADC 采样点，2 的倍数
+ATS.recordsPerBuffer  = 50;         % 每个 DMA buffer 的 A-line 数
+ATS.sdkInclude        = 'C:\AlazarTech\ATS-SDK\23.3.0\Samples_MATLAB\Include';
+
+%% 3. 换算与检查
+K = DX_UM / UM_PER_PULSE;                       % 每条 A-line 之间的脉冲数
+assert(abs(K - round(K)) &lt; 1e-9 &amp;&amp; K &gt;= 1, 'DX_UM 必须是 %.3f um 的整数倍。', UM_PER_PULSE);
+K = round(K);
+stepFreq = K * TRIG_RATE_HZ;
+scanSpeed = stepFreq * UM_PER_PULSE / 1000;     % mm/s
+assert(scanSpeed &lt;= MAX_SPEED_MM_S, '扫描速度 %.2f mm/s 超过上限，请降低 TRIG_RATE_HZ 或 DX_UM。', scanSpeed);
+assert(RETURN_SPEED_MM_S &lt;= MAX_SPEED_MM_S, '返回速度超过上限。');
+
+Nx = round(SCAN_LENGTH_UM / DX_UM);
+Nx = ceil(Nx / ATS.recordsPerBuffer) * ATS.recordsPerBuffer;   % 凑成 buffer 的整数倍
+nRamp = round(RAMP_UM / UM_PER_PULSE);
+nScan = Nx * K;
+travel = (2 * nRamp + nScan) * UM_PER_PULSE;
+assert(travel &lt;= MAX_TRAVEL_UM, '总行程 %.0f um 超过上限 %.0f um。', travel, MAX_TRAVEL_UM);
+
+pScan = floor(FS_MAX / stepFreq);               % 每个脉冲的行数（整数，保证触发间隔精确）
+assert(pScan &gt;= 2, '步频太高，DO 时钟不够。');
+fs = stepFreq * pScan;
+wTrig = max(1, round(TRIG_WIDTH_S * fs));
+assert(wTrig &lt; K * pScan, '触发脉宽太长。');
+
+%% 4. 生成时序：列 1 STEP，列 2 DIR，列 3 DAQ 触发，列 4 激光触发
+up      = rampPeriods(nRamp, START_FREQ_HZ, stepFreq, fs, pScan);
+segScan = [up; repmat(pScan, nScan, 1); flipud(up)];
+trigOn  = [false(nRamp, 1); mod((0:nScan-1)', K) == 0; false(nRamp, 1)];
+stepScan = stepColumn(segScan);
+startsScan = [0; cumsum(segScan(1:end-1))];
+trigScan = false(size(stepScan));
+idx = startsScan(trigOn) + (1:wTrig);
+trigScan(idx(:)) = true;
+
+if RETURN_TO_START
+    fRet = RETURN_SPEED_MM_S * 1000 / UM_PER_PULSE;
+    pRet = max(2, round(fs / fRet));
+    upR  = rampPeriods(nRamp, START_FREQ_HZ, fRet, fs, pRet);
+    segRet = [upR; repmat(pRet, nScan, 1); flipud(upR)];   % 与去程步数相同
+    stepRet = stepColumn(segRet);
+else
+    stepRet = false(0, 1);
+end
+
+lead  = round(DIR_SETUP_S * fs);
+pause_rows = round(PAUSE_S * fs);
+nA = numel(stepScan); nR = numel(stepRet);
+N  = lead + nA + pause_rows + nR + 1;           % 最后一行全部归零
+do = false(N, 4);
+rA = lead + (1:nA);
+do(rA, 1) = stepScan;
+do(rA, 3) = trigScan;
+if LASER_ENABLE
+    do(rA, 4) = trigScan;
+end
+dirSwitch = lead + nA + floor(pause_rows / 2);  % 停顿中途翻转 DIR
+do(1:dirSwitch, 2) = logical(DIR_SCAN);
+if RETURN_TO_START
+    rR = lead + nA + pause_rows + (1:nR);
+    do(rR, 1) = stepRet;
+    do(dirSwitch+1 : N-1, 2) = ~logical(DIR_SCAN);
+end
+
+%% 5. 检查：位置和触发位置（由 do 矩阵推算，不是实测）
+fall = [false; diff(do(:,1)) == -1];            % SR2 在 STEP 下降沿走一步
+sgn  = 2 * (do(:,2) == logical(DIR_SCAN)) - 1;
+pos_um = cumsum(fall .* sgn) * UM_PER_PULSE;
+tr = find(diff([false; do(:,3)]) == 1);
+xA = pos_um(tr);
+spacing = diff(xA);
+t = (0:N-1)' / fs;
+
+fprintf('A-line 数 %d，间距 %.2f um（实际 %.2f ~ %.2f um），B-scan 长度 %.2f mm\n', ...
+    numel(tr), DX_UM, min(spacing), max(spacing), (xA(end) - xA(1)) / 1000);
+fprintf('扫描速度 %.2f mm/s，步频 %.0f Hz，触发 %.0f Hz，DO 采样率 %.0f S/s\n', ...
+    scanSpeed, stepFreq, TRIG_RATE_HZ, fs);
+fprintf('总行程 %.2f mm，总用时 %.2f s，结束位置 %+.1f um，激光触发：%s\n', ...
+    travel / 1000, N / fs, pos_um(end), string(LASER_ENABLE));
+
+figure('Name', 'B-scan plan (computed)', 'Color', 'w');
+subplot(2,1,1);
+plot(t, pos_um / 1000); hold on
+plot(t(tr), xA / 1000, 'r.', 'MarkerSize', 4); hold off
+xlabel('Time (s)'); ylabel('X (mm)'); grid on
+title(sprintf('计划位置（计算值），红点 = %d 个触发位置', numel(tr)));
+subplot(2,1,2);
+z = tr(1) - 2*K*pScan : tr(3) + K*pScan;
+z = z(z &gt;= 1 &amp; z &lt;= N);
+labels = ["X STEP" "X DIR" "DAQ Trig" "Laser Trig"];
+hold on
+for c = 1:4
+    stairs(t(z) * 1e3, double(do(z, c)) * 0.8 + (c - 1));
+end
+hold off
+yticks((0:3) + 0.4); yticklabels(labels); ylim([-0.2 4]);
+xlabel('Time (ms)'); title('第一个触发附近的时序（计算值）'); grid on
+
+%% 6. 运行硬件
+if ~RUN_HARDWARE
+    fprintf('\n*** 检查模式：没有向硬件发送任何信号。确认无误后把 RUN_HARDWARE 改成 true ***\n');
+    return
+end
+
+clear d dq cnt
+daqreset
+doLines = [STEP_LINE DIR_LINE DAQTRIG_LINE LASER_LINE];
+raw = runBscan(do, fs, doLines, CLOCK_AI, Nx, ATS);
+
+bscan = struct();
+bscan.volts = (double(raw) / 65535 * 2 - 1) * ATS.inputRange_V;   % samples x Nx
+bscan.x_um  = xA(:)' - xA(1);
+bscan.t_us  = (ATS.triggerDelay + (0:ATS.samplesPerALine-1)') / ATS.sampleRate_Hz * 1e6;
+bscan.raw_u16 = raw;
+bscan.params = struct('SCAN_LENGTH_UM', SCAN_LENGTH_UM, 'DX_UM', DX_UM, ...
+    'TRIG_RATE_HZ', TRIG_RATE_HZ, 'LASER_ENABLE', LASER_ENABLE, ...
+    'UM_PER_PULSE', UM_PER_PULSE, 'fs', fs, 'ATS', ATS);
+bscan.time = datetime('now');
+
+sig = bscan.volts - median(bscan.volts, 1);     % 每条 A-line 减去自身中值
+env = abs(hilbert(sig));
+figure('Name', 'B-scan', 'Color', 'w');
+imagesc(bscan.x_um / 1000, bscan.t_us, env);
+xlabel('X (mm)'); ylabel('Time after trigger (us)'); colorbar
+title(sprintf('B-scan 包络  %d A-lines, 激光 %s', Nx, string(LASER_ENABLE)));
+fprintf('完成：采到 %d 条 A-line，rail 点数 %d\n', size(raw, 2), nnz(raw == 0 | raw == 65535));
+
+if SAVE_DATA
+    outDir = fullfile(pwd, 'bscan_data');
+    if ~isfolder(outDir), mkdir(outDir); end
+    f = fullfile(outDir, ['bscan_' char(datetime('now', 'Format', 'yyyyMMdd_HHmmss')) '.mat']);
+    save(f, 'bscan');
+    fprintf('已保存：%s\n', f);
+end
+
+%% ===== 本地函数 =====
+function p = rampPeriods(n, f0, f1, fs, pMin)
+% 线性加速：步频从 f0 增加到 f1，返回每一步的行数
+    if n == 0
+        p = zeros(0, 1);
+        return
+    end
+    f = linspace(min(f0, f1), f1, n)';
+    p = max(pMin, round(fs ./ f));
+end
+
+function col = stepColumn(periods)
+% 每一步：前一半行为高，后一半为低
+    starts = [0; cumsum(periods(1:end-1))];
+    col = false(sum(periods), 1);
+    for i = 1:numel(periods)
+        col(starts(i) + (1:max(1, floor(periods(i) / 2)))) = true;
+    end
+end
+
+function raw = runBscan(do, fs, doLines, clockAI, Nx, P)
+% 先把 ATS9462 准备好（所有 DMA buffer 预先提交），再让 Dev1 输出整个时序。
+    addpath(P.sdkInclude);
+    AlazarDefs;
+    alazarLoadLibrary();
+    board = AlazarGetBoardBySystemID(int32(1), int32(1));
+    [~, bits] = AlazarGetChannelInfo(board);
+    assert(double(bits) == 16, 'Expected 16-bit ATS9462.');
+
+    rateIds  = containers.Map({100e6, 160e6, 180e6}, ...
+        {SAMPLE_RATE_100MSPS, SAMPLE_RATE_160MSPS, SAMPLE_RATE_180MSPS});
+    rangeIds = containers.Map({0.2, 0.4, 0.8, 2, 4}, ...
+        {INPUT_RANGE_PM_200_MV, INPUT_RANGE_PM_400_MV, INPUT_RANGE_PM_800_MV, ...
+         INPUT_RANGE_PM_2_V, INPUT_RANGE_PM_4_V});
+    AlazarSetCaptureClock(board, INTERNAL_CLOCK, rateIds(P.sampleRate_Hz), CLOCK_EDGE_RISING, 0);
+    AlazarInputControlEx(board, CHANNEL_A, DC_COUPLING, rangeIds(P.inputRange_V), IMPEDANCE_50_OHM);
+    AlazarSetBWLimit(board, CHANNEL_A, 0);
+    AlazarSetExternalTrigger(board, DC_COUPLING, ETR_5V);
+    AlazarSetTriggerOperation(board, TRIG_ENGINE_OP_J, TRIG_ENGINE_J, TRIG_EXTERNAL, ...
+        TRIGGER_SLOPE_POSITIVE, P.triggerLevelCode, TRIG_ENGINE_K, TRIG_DISABLE, ...
+        TRIGGER_SLOPE_POSITIVE, 128);
+    AlazarSetTriggerDelay(board, P.triggerDelay);
+    AlazarSetTriggerTimeOut(board, 0);
+    AlazarConfigureAuxIO(board, AUX_OUT_TRIGGER, 0);
+
+    spr = P.samplesPerALine;
+    rpb = P.recordsPerBuffer;
+    nBuf = Nx / rpb;
+    bytesPerBuffer = 2 * spr * rpb;
+    buffers = cell(1, nBuf);
+    for i = 1:nBuf
+        buffers{i} = AlazarAllocBuffer(board, bytesPerBuffer);
+    end
+    guard = onCleanup(@() releaseAll(board, buffers)); %#ok&lt;NASGU&gt;
+
+    AlazarSetRecordSize(board, 0, spr);
+    AlazarBeforeAsyncRead(board, CHANNEL_A, 0, spr, rpb, Nx, ...
+        bitor(ADMA_EXTERNAL_STARTCAPTURE, ADMA_NPT));
+    for i = 1:nBuf
+        AlazarPostAsyncBuffer(board, buffers{i}, bytesPerBuffer);
+    end
+    AlazarStartCapture(board);
+    fprintf('ATS armed：等待 %d 个触发...\n', Nx);
+
+    dq = daq("ni");
+    dq.Rate = fs;
+    ai = addinput(dq, "Dev1", clockAI, "Voltage");
+    ai.TerminalConfig = "Differential";
+    for k = 1:numel(doLines)
+        addoutput(dq, "Dev1", doLines(k), "Digital");
+    end
+    readwrite(dq, double(do), "OutputFormat", "Matrix");
+    clear dq
+    fprintf('Dev1 时序输出完成。\n');
+
+    raw = zeros(spr, Nx, 'uint16');
+    for i = 1:nBuf
+        ret = AlazarWaitAsyncBufferComplete(board, buffers{i}, 2000);
+        if ret ~= ApiSuccess
+            error('Bscan:Buffer', 'Buffer %d/%d 未完成（返回码 %d）：检查 P0.6 是否接到 ATS TRIG IN。', ...
+                i, nBuf, ret);
+        end
+        setdatatype(buffers{i}, 'uint16Ptr', 1, spr * rpb);
+        raw(:, (i-1)*rpb + (1:rpb)) = reshape(buffers{i}.Value, spr, rpb);
+    end
+end
+
+function releaseAll(board, buffers)
+    try
+        AlazarAbortAsyncRead(board);
+    catch e
+        warning('Bscan:Abort', 'DMA abort failed; buffers NOT freed. Restart MATLAB. %s', e.message);
+        return
+    end
+    for i = 1:numel(buffers)
+        try
+            AlazarFreeBuffer(board, buffers{i});
+        catch
+        end
+    end
+end</pre>
+  </div>
+</section>
+
+<section id="files">
+  <h2><span class="n">08</span>实验室电脑上的相关文件</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>位置</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td><code>Desktop\Matlab\test2.m</code></td><td>移动滑台脚本（本页版本已去掉末尾的万用表测试行）</td></tr>
+      <tr><td><code>Desktop\Matlab\bscan_test.m</code></td><td>B-scan 脚本</td></tr>
+      <tr><td><code>Desktop\Matlab\ats9462_aline_test_revised.m</code></td><td>ATS9462 外部触发采单条 A-line，bscan_test.m 的 ATS 配置来源</td></tr>
+      <tr><td><code>Desktop\System_test_09_25\bscantest.m</code></td><td>分析 LabVIEW DO 时序，含位分配</td></tr>
+      <tr><td><code>Desktop\Control_py\</code></td><td>Python：<code>control card\</code> 用 ctr0→PFI12 触发 ATS，<code>digitizer\</code> 是 ATS 采集</td></tr>
+      <tr><td><code>Downloads\CXP Motorized stage.pdf</code></td><td>滑台和电机参数、DB9 接线</td></tr>
+      <tr><td><code>Downloads\SlowScan_ENdaq</code> 等</td><td>原 LabVIEW 扫描程序</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>整理自 2026-10-02 至 10-03 的调试过程。标注"已验证"的内容在实验室电脑上实际运行过；其余为根据手册和代码的推断，使用前请核对。</footer>
+</div>
+
+<script>
+document.querySelectorAll('button.copy').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var el = document.getElementById(btn.dataset.target);
+    var text = el.textContent;
+    function done(label) { btn.textContent = label; setTimeout(function () { btn.textContent = '复制'; }, 1600); }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(el);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      done('已选中，按 Ctrl+C');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done('已复制'); }, fallback);
+    } else { fallback(); }
+  });
+});
+</script>
+
+</body></html>

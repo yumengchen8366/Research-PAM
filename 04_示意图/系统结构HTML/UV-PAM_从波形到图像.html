@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从一发激光到一张图:A-line 数据全链路</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family:-apple-system,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+         margin:0; padding:24px; background:#f5f6f8; color:#1b1e24; }
+  h1 { font-size:21px; margin:0 0 4px; }
+  .sub { color:#5a6472; font-size:13.5px; margin:0 0 18px; }
+  .card { background:#fff; border:1px solid #e3e6ea; border-radius:14px; padding:16px; margin-bottom:18px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  .card h2 { font-size:15.5px; margin:0 0 10px; }
+  svg { width:100%; height:auto; display:block; }
+  .cap { font-size:12.5px; color:#5a6472; line-height:1.7; margin:10px 0 0; }
+  code { background:#eef0f3; padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+</head>
+<body>
+<h1>从一发激光到一张图</h1>
+<p class="sub">① 深度怎么变成时间 → ② 一条 A-line 长什么样 → ③ 怎么摆成 B-scan / 压成 C-scan → ④ 文件里怎么存</p>
+
+<div class="card">
+<h2>① 物理:深度 = 声速 × 到达时间</h2>
+<svg viewBox="0 0 900 240">
+  <!-- transducer -->
+  <rect x="120" y="20" width="200" height="26" rx="4" fill="#4a80c8"/>
+  <text x="220" y="38" text-anchor="middle" fill="#fff" font-size="13">换能器(听声音的耳朵)</text>
+  <!-- tissue -->
+  <rect x="80" y="66" width="280" height="150" rx="6" fill="#fbf1df" stroke="#eed7ac"/>
+  <text x="90" y="208" font-size="11.5" fill="#8a6a20">样品</text>
+  <!-- absorbers -->
+  <circle cx="220" cy="105" r="9" fill="#c85a54"/>
+  <text x="240" y="109" font-size="12">浅的吸收体(深度 d₁)</text>
+  <circle cx="220" cy="175" r="9" fill="#8a2f2a"/>
+  <text x="240" y="179" font-size="12">深的吸收体(深度 d₂)</text>
+  <!-- sound arrows -->
+  <line x1="213" y1="96" x2="205" y2="50" stroke="#c85a54" stroke-width="2.5" marker-end="url(#ar)"/>
+  <line x1="227" y1="166" x2="238" y2="50" stroke="#8a2f2a" stroke-width="2.5" marker-end="url(#ar)"/>
+  <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#555"/></marker></defs>
+  <!-- timeline -->
+  <line x1="430" y1="150" x2="860" y2="150" stroke="#3a4048" stroke-width="1.5"/>
+  <text x="430" y="172" font-size="11.5" fill="#5a6472">激光打下(t=0)</text>
+  <line x1="430" y1="142" x2="430" y2="158" stroke="#3a4048"/>
+  <rect x="580" y="118" width="7" height="32" fill="#c85a54"/>
+  <text x="584" y="108" text-anchor="middle" font-size="11.5" fill="#c85a54">t₁ 浅的先到</text>
+  <rect x="740" y="118" width="7" height="32" fill="#8a2f2a"/>
+  <text x="744" y="108" text-anchor="middle" font-size="11.5" fill="#8a2f2a">t₂ 深的后到</text>
+  <text x="645" y="200" text-anchor="middle" font-size="13" font-weight="600" fill="#1b1e24">深度 d = 声速 v × 时间 t (v ≈ 1.5 mm/μs)</text>
+</svg>
+<p class="cap">激光一闪,样品里吸收光的点会"热胀"并发出超声。声波往上飞到换能器要时间:<b>浅的先到、深的后到</b>。所以只要记下"什么时候听到声音",就等于量出了"多深有东西"。这就是"时间轴对应声学深度"。</p>
+</div>
+
+<div class="card">
+<h2>② 一条 A-line = 触发后"录音" 64 个电压数</h2>
+<svg viewBox="0 0 900 250">
+  <!-- axes -->
+  <line x1="70" y1="200" x2="860" y2="200" stroke="#3a4048" stroke-width="1.5"/>
+  <line x1="70" y1="30" x2="70" y2="200" stroke="#3a4048" stroke-width="1.5"/>
+  <text x="20" y="40" font-size="11.5" fill="#5a6472">uint16</text>
+  <text x="20" y="56" font-size="11.5" fill="#5a6472">65535</text>
+  <text x="20" y="120" font-size="11.5" fill="#5a6472">~32768</text>
+  <text x="34" y="200" font-size="11.5" fill="#5a6472">0</text>
+  <!-- baseline -->
+  <line x1="70" y1="115" x2="860" y2="115" stroke="#c9ccd1" stroke-dasharray="4 4"/>
+  <!-- waveform: baseline with two wiggles -->
+  <path d="M70,115 L250,115 Q262,60 274,115 Q286,168 298,115 L560,115 Q574,78 588,115 Q602,150 616,115 L860,115"
+        fill="none" stroke="#2f6db3" stroke-width="2.5"/>
+  <text x="284" y="48" text-anchor="middle" font-size="12" fill="#c85a54">浅吸收体的峰(靠前)</text>
+  <text x="588" y="66" text-anchor="middle" font-size="12" fill="#8a2f2a">深吸收体的峰(靠后)</text>
+  <!-- sample ticks -->
+  <g font-size="11" fill="#5a6472">
+    <text x="70" y="220">样本 0</text><text x="440" y="220" text-anchor="middle">…每 10 ns 一个数(100 MS/s)…</text><text x="860" y="220" text-anchor="end">样本 63</text>
+  </g>
+  <g font-size="11" fill="#8a6a20">
+    <text x="70" y="242">深度 0</text><text x="440" y="242" text-anchor="middle">同一根轴换个刻度 = 深度(64 点 ≈ 1 mm 窗口)</text><text x="860" y="242" text-anchor="end">≈1 mm</text>
+  </g>
+</svg>
+<p class="cap">触发一到,采集卡像录音机一样<b>每 10 ns 记一个电压</b>,连记 <code>A-Line Points</code>=64 个,得到 64 个 0–65535 的数——这就是一条 A-line。第几个数冒峰 = 那一深度有吸收体。<code>Trig Delay 3.5μs</code> 是"先等声波飞过换能器到样品的空程,再开录"。记法:<b>A = Amplitude vs time,一个点一条线</b>。</p>
+</div>
+
+<div class="card">
+<h2>③ 摆成 B-scan(保留深度) / 压成 C-scan(舍弃深度)</h2>
+<svg viewBox="0 0 900 300">
+  <!-- B-scan: columns -->
+  <text x="180" y="24" text-anchor="middle" font-size="13" font-weight="600">B-scan:把一行的 A-line 竖着并排</text>
+  <g>
+    <rect x="80" y="40" width="200" height="150" fill="#eef2f7" stroke="#c9d4e2"/>
+    <!-- columns -->
+    <line x1="105" y1="40" x2="105" y2="190" stroke="#dfe6ee"/>
+    <line x1="130" y1="40" x2="130" y2="190" stroke="#dfe6ee"/>
+    <line x1="155" y1="40" x2="155" y2="190" stroke="#dfe6ee"/>
+    <line x1="180" y1="40" x2="180" y2="190" stroke="#dfe6ee"/>
+    <line x1="205" y1="40" x2="205" y2="190" stroke="#dfe6ee"/>
+    <line x1="230" y1="40" x2="230" y2="190" stroke="#dfe6ee"/>
+    <line x1="255" y1="40" x2="255" y2="190" stroke="#dfe6ee"/>
+    <!-- tilted bright band = a fiber crossing at varying depth -->
+    <circle cx="92" cy="150" r="6" fill="#2f6db3"/><circle cx="117" cy="138" r="6" fill="#2f6db3"/>
+    <circle cx="142" cy="124" r="6" fill="#2f6db3"/><circle cx="167" cy="110" r="6" fill="#2f6db3"/>
+    <circle cx="192" cy="96" r="6" fill="#2f6db3"/><circle cx="217" cy="84" r="6" fill="#2f6db3"/>
+    <circle cx="242" cy="72" r="6" fill="#2f6db3"/><circle cx="267" cy="62" r="6" fill="#2f6db3"/>
+    <text x="80" y="208" font-size="11.5" fill="#5a6472">横轴=第几条 A-line(=x 位置)</text>
+    <text x="80" y="224" font-size="11.5" fill="#5a6472">纵轴=样本序号(=深度) → 斜着的亮带=一根斜放的纤维</text>
+  </g>
+  <!-- arrow -->
+  <text x="360" y="115" font-size="12.5" fill="#5a6472" text-anchor="middle">每列取</text>
+  <text x="360" y="132" font-size="12.5" font-weight="600" fill="#1b1e24" text-anchor="middle">max − min</text>
+  <line x1="320" y1="145" x2="400" y2="145" stroke="#3a4048" stroke-width="2" marker-end="url(#ar2)"/>
+  <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#3a4048"/></marker></defs>
+  <!-- 1D row -->
+  <text x="520" y="24" text-anchor="middle" font-size="13" font-weight="600">压扁成一行像素</text>
+  <g>
+    <rect x="430" y="130" width="24" height="24" fill="#f4a259"/><rect x="454" y="130" width="24" height="24" fill="#f08a3c"/>
+    <rect x="478" y="130" width="24" height="24" fill="#e76f2e"/><rect x="502" y="130" width="24" height="24" fill="#f08a3c"/>
+    <rect x="526" y="130" width="24" height="24" fill="#f4a259"/><rect x="550" y="130" width="24" height="24" fill="#f7c08a"/>
+    <rect x="574" y="130" width="24" height="24" fill="#fbe3c8"/>
+    <text x="430" y="176" font-size="11.5" fill="#5a6472">每格 1 个数 = 该 x 位置的信号强弱(深度信息没了)</text>
+  </g>
+  <!-- C-scan stack -->
+  <text x="770" y="24" text-anchor="middle" font-size="13" font-weight="600">C-scan:很多行叠起来</text>
+  <g>
+    <rect x="680" y="40" width="180" height="150" fill="#fdf6ec" stroke="#eed7ac"/>
+    <!-- hair-like bright curve -->
+    <path d="M700,170 Q740,120 780,105 Q820,90 845,60" fill="none" stroke="#e76f2e" stroke-width="8" stroke-linecap="round"/>
+    <text x="680" y="208" font-size="11.5" fill="#5a6472">横轴=x,纵轴=y(每扫一行加一排)</text>
+    <text x="680" y="224" font-size="11.5" fill="#5a6472">= 俯视图:头发的形状显出来了</text>
+  </g>
+</svg>
+<p class="cap"><b>深度信息去哪了:</b>它一直存在每条 A-line 自己的 64 个数里(.dat 原始文件是全存的);B-scan 显示它,C-scan 显示时把它用 max−min 压扁成 1 个数。所以"能不能看深度"取决于你怎么<b>处理</b>数据,不取决于文件——文件里都有。</p>
+</div>
+
+<div class="card">
+<h2>④ 文件里怎么存:一条接一条的纯数字流(没有坐标!)</h2>
+<svg viewBox="0 0 900 190">
+  <g font-size="11">
+    <!-- pixel1 group -->
+    <rect x="30" y="40" width="66" height="34" fill="#dbe7f6" stroke="#9db9dd"/><text x="63" y="61" text-anchor="middle">A-line 1</text>
+    <rect x="98" y="40" width="66" height="34" fill="#dbe7f6" stroke="#9db9dd"/><text x="131" y="61" text-anchor="middle">A-line 2</text>
+    <rect x="166" y="40" width="30" height="34" fill="#dbe7f6" stroke="#9db9dd"/><text x="181" y="61" text-anchor="middle">…</text>
+    <rect x="198" y="40" width="66" height="34" fill="#dbe7f6" stroke="#9db9dd"/><text x="231" y="61" text-anchor="middle">A-line 20</text>
+    <path d="M30,82 L30,90 L264,90 L264,82" fill="none" stroke="#4a80c8"/>
+    <text x="147" y="106" text-anchor="middle" fill="#2f5a94">像素 1(Subpx=20 条,先平均)</text>
+    <!-- pixel2 -->
+    <rect x="280" y="40" width="120" height="34" fill="#e6eef8" stroke="#b7c9e0"/><text x="340" y="61" text-anchor="middle">像素 2 的 20 条</text>
+    <rect x="404" y="40" width="40" height="34" fill="#eef2f7" stroke="#c9d4e2"/><text x="424" y="61" text-anchor="middle">…</text>
+    <rect x="446" y="40" width="130" height="34" fill="#e6eef8" stroke="#b7c9e0"/><text x="511" y="61" text-anchor="middle">像素 Xn 的 20 条</text>
+    <path d="M30,118 L30,126 L576,126 L576,118" fill="none" stroke="#4f9d69"/>
+    <text x="300" y="142" text-anchor="middle" fill="#2f6a45">第 1 行(y=1)· 回程不存</text>
+    <!-- row2 -->
+    <rect x="592" y="40" width="120" height="34" fill="#fdf3e3" stroke="#e8cf9e"/><text x="652" y="61" text-anchor="middle">第 2 行 …</text>
+    <rect x="716" y="40" width="40" height="34" fill="#fdf6ec" stroke="#eed7ac"/><text x="736" y="61" text-anchor="middle">…</text>
+    <rect x="758" y="40" width="120" height="34" fill="#fdf3e3" stroke="#e8cf9e"/><text x="818" y="61" text-anchor="middle">第 Yn 行</text>
+    <text x="30" y="172" font-size="12" fill="#1b1e24">每条 A-line = 64 个 uint16(128 字节)· 文件大小 = 2 × 64 × Subpx × Xn × Yn 字节</text>
+  </g>
+</svg>
+<p class="cap"><b>最重要的认识:文件里没有任何 x、y 坐标。</b>只有 A-line 一条接一条。"第 k 条属于哪行哪列"完全靠<b>数数</b>:每 20 条 = 一个像素,每 Xn×20 条 = 一行。这也是点数 bug 致命的原因——某行一旦多了 10 条,后面所有 A-line 的"隐含坐标"就全体错位,而文件里没有坐标可以纠正它。</p>
+</div>
+</body>
+</html>

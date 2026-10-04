@@ -1,0 +1,9 @@
+function buffer = AlazarAllocBuffer(boardHandle, size_bytes)
+    buffer = calllib('ATSApi', ...
+                     'AlazarAllocBufferU8', ...
+                     boardHandle, ...
+                     size_bytes);
+    if isNull(buffer)
+        throw(MException('AlazarAllocBuffer:error', 'Allocation failed'));
+    end
+end

@@ -1,0 +1,23 @@
+# —— 不进 git 的东西（只留本机）——
+# LabVIEW 原工程：二进制、属实验室，两台电脑本地各有一份
+03_LabVIEW代码/
+06_控制程序/LabviewPAM/
+# 待删除的重复文件
+_to_delete/
+# 录音（隐私 + 体积）
+*.m4a
+*.mp3
+*.wav
+# 大数据：B-scan / C-scan 原始数据另存（单文件 >50 MB 不要 commit）
+07_MATLAB/bscan_data/
+07_MATLAB/cscan_data/
+*.dat
+# Claude 本地状态（会话原文 .jsonl 太大且带本机路径；用 tools/export_pam_chats.py 导出成 md）
+*.jsonl
+.claude/settings.local.json
+# 系统/编辑器垃圾
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+*.asv

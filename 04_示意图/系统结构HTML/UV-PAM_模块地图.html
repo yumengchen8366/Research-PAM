@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UV-PAM B-Scan 帧 模块地图</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+         margin:0; padding:26px; background:#f5f6f8; color:#1b1e24; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:#5a6472; font-size:14px; margin:0 0 18px; }
+  .legend { display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:#41474f; margin:0 0 16px; }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .dot { width:12px; height:12px; border-radius:3px; display:inline-block; }
+  .grid { display:grid; gap:12px;
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+          grid-template-areas:
+            "init  loop  loop  clean"
+            "pre   send  ctrl  clean"
+            "ao    ao    ctrl  clean"
+            "data  data  data  data"; }
+  .box { border-radius:12px; padding:12px 14px; border:1px solid; }
+  .box h3 { margin:0 0 6px; font-size:14.5px; display:flex; align-items:center; gap:7px; }
+  .box .num { display:inline-flex; width:19px; height:19px; border-radius:50%; color:#fff;
+              font-size:12px; align-items:center; justify-content:center; flex:0 0 auto; }
+  .box p { margin:0 0 9px; font-size:12.5px; line-height:1.55; color:#3a4048; }
+  .chips { display:flex; flex-wrap:wrap; gap:5px; }
+  .chip { font-size:11px; background:rgba(0,0,0,.055); border-radius:6px; padding:2px 7px; color:#2a2f36; white-space:nowrap; }
+  .init { grid-area:init; background:#eef4fc; border-color:#bcd4f0; } .init .num{background:#4a80c8;}
+  .pre  { grid-area:pre;  background:#eaf6ef; border-color:#bfe2cd; } .pre .num{background:#4f9d69;}
+  .loop { grid-area:loop; background:#f3eefc; border-color:#d8c9f0; } .loop .num{background:#8a5cc8;}
+  .send { grid-area:send; background:#f3eefc; border-color:#d8c9f0; } .send .num{background:#8a5cc8;}
+  .ctrl { grid-area:ctrl; background:#fdf2e6; border-color:#f2d8b4; } .ctrl .num{background:#d08a2b;}
+  .clean{ grid-area:clean;background:#fdf2e6; border-color:#f2d8b4; } .clean .num{background:#d08a2b;}
+  .ao   { grid-area:ao;   background:#eef4fc; border-color:#bcd4f0; } .ao .num{background:#4a80c8;}
+  .data { grid-area:data; background:#fbf1df; border-color:#eed7ac; } .data .num{background:#c98a2b;}
+  .flow { text-align:center; font-size:12.5px; color:#5a6472; margin:14px 0 0; }
+  .footer { font-size:12.5px; color:#5a6472; line-height:1.7; margin-top:18px;
+            background:#fff; border:1px solid #e3e6ea; border-radius:12px; padding:14px 16px; }
+  .footer b { color:#1b1e24; }
+  @media (max-width:760px){ .grid{ grid-template-columns:1fr; grid-template-areas:"init" "pre" "loop" "send" "ctrl" "ao" "clean" "data"; } }
+</style>
+</head>
+<body>
+  <h1>B-Scan 帧 · 模块地图</h1>
+  <p class="sub">教授的"大模块"分区 · 方框位置大致对应框图布局 &nbsp;|&nbsp; 配套笔记 §21</p>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#4a80c8"></i>初始化</span>
+    <span><i class="dot" style="background:#4f9d69"></i>提前算波形(生成)</span>
+    <span><i class="dot" style="background:#8a5cc8"></i>发送 / 主循环</span>
+    <span><i class="dot" style="background:#d08a2b"></i>控制 / 停止 / 收尾</span>
+    <span><i class="dot" style="background:#c98a2b"></i>采集 · 计算 · 显示 · 存储</span>
+  </div>
+
+  <div class="grid">
+    <div class="box init">
+      <h3><span class="num">1</span>初始化区(左上)</h3>
+      <p>开头只跑一次:武装采集卡、建存盘文件。</p>
+      <div class="chips"><span class="chip">ATS 9350 Simple Async</span><span class="chip">Create Binary File → Refnum</span></div>
+    </div>
+
+    <div class="box loop">
+      <h3><span class="num">3</span>主扫描循环区(中上,大 while 框)</h3>
+      <p>扫描时一直跑,循环 Xn 次。每圈把提前算好的波形送出去。</p>
+      <div class="chips"><span class="chip">While Loop</span><span class="chip">Send DO Pulse</span><span class="chip">x count in B-scan loop</span><span class="chip">Curr_X 计步</span><span class="chip">MaxQ 队列</span></div>
+    </div>
+
+    <div class="box clean">
+      <h3><span class="num">4b</span>收尾区(右)</h3>
+      <p>扫完复位:振镜回位、按钮置 False、计步清零。</p>
+      <div class="chips"><span class="chip">Return Galvo</span><span class="chip">Start B-Scan = F</span><span class="chip">Curr_X = 0</span></div>
+    </div>
+
+    <div class="box pre">
+      <h3><span class="num">2</span>提前算波形区(左下)</h3>
+      <p>扫描前一次性算好整条 8-bit 波形数组(前向 + 后向)。</p>
+      <div class="chips"><span class="chip">GEN SKIP PULSE (bit6 DAQ)</span><span class="chip">GEN SKIP PULSE (bit7 Laser)</span><span class="chip">GEN PULSE 前向</span><span class="chip">GEN PULSE 后向(方向取反)</span><span class="chip">÷ × R÷IQ</span><span class="chip">Build Array → Forward/Backward DO Pulse</span></div>
+    </div>
+
+    <div class="box send">
+      <h3><span class="num">3b</span>发送区(NI 卡任务)</h3>
+      <p>用采集卡内部 DAQmx 函数把波形播出去。</p>
+      <div class="chips"><span class="chip">Init DOAO DAQ</span><span class="chip">Run DOAO DAQ</span><span class="chip">Stop DOAO DAQ</span></div>
+    </div>
+
+    <div class="box ctrl">
+      <h3><span class="num">4</span>停止 / 报错控制区(中右)</h3>
+      <p>决定循环何时停;采集卡报错即停。</p>
+      <div class="chips"><span class="chip">Stop / Stop Scan</span><span class="chip">Continuous B-Scan?</span><span class="chip">Alaz DAQ Error</span><span class="chip">ATS Error Code</span></div>
+    </div>
+
+    <div class="box ao">
+      <h3><span class="num">5</span>AO 振镜控制(顶部)</h3>
+      <p>模拟输出(连续电压)控制 galvo 振镜,区别于 DO 数字触发。</p>
+      <div class="chips"><span class="chip">Scan AO Channel(s)</span><span class="chip">Galvo Parameters</span></div>
+    </div>
+
+    <div class="box data">
+      <h3><span class="num">6</span>数据采集 + 计算 + 显示 + 存储区(整个下半部分)</h3>
+      <p>从采集卡取回数据 → 重排 → 算投影值 → 显示 → 存 .dat。</p>
+      <div class="chips">
+        <span class="chip">Get Async Data(读取)</span>
+        <span class="chip">Reshape / Index(转换)</span>
+        <span class="chip">RMS / Max−Min(计算)</span>
+        <span class="chip">All Chan1/2(显示)</span>
+        <span class="chip">B / C / V-Scan(拼图)</span>
+        <span class="chip">Save Data U16(存储)</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="flow">数据流向:&nbsp; ① 初始化 → ② 算波形 → ③ 主循环 + 发送 → ⑤ AO 振镜 → 采集 → ⑥ 计算/显示/存储 → ④ 停止/收尾</p>
+
+  <div class="footer">
+    <p><b>DO vs AO:</b> <code>DO</code>=数字输出(0/1),做触发和电机脉冲;<code>DO Pulses</code> 是一维 U8 数组,<code>DO Sample Rate</code> 控制多快往外发。<code>AO</code>=模拟输出(0–5V 连续),控制振镜。</p>
+    <p><b>看图顺序:</b> 先懂「DO Pulses 是什么」→ 再看②怎么把它拼出来 → 再看③怎么播出去 → 再看⑥采集显示 → ①④最简单最后看。不认识的函数用 <b>Ctrl+H(即时帮助)</b> 把问号停上去就有解释。</p>
+  </div>
+</body>
+</html>

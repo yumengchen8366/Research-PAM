@@ -1,0 +1,5 @@
+- [PAM PhD student](user-pam-phd-student.md) — who the user is, LabVIEW→MATLAB rewrite goal, hardware
+- [Teach, don't do](feedback-teach-dont-do.md) — explain then let user write code; Claude reviews
+- [Two computers sync](project-two-computers-sync.md) — sessions are local-only; 10/3 snapshot package + restore.ps1 for 2nd PC
+- [A-line ATS9462 code & data](project-aline-ats9462.md) — script/data paths, 10/1 data facts, advisor's W1 delay test
+- [10/3–10/4 sprint](project-sprint-1003-1004.md) — two-day push on A-line tests + motor calibration; checklist in docs/09

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UV-PAM 扫描层级与时钟触发</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+         margin:0; padding:28px; background:#f5f6f8; color:#1b1e24; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:#5a6472; font-size:14px; margin:0 0 22px; }
+  .card { background:#fff; border:1px solid #e3e6ea; border-radius:14px; padding:18px 20px 10px;
+          box-shadow:0 1px 3px rgba(0,0,0,.06); margin-bottom:22px; }
+  h2 { font-size:16px; margin:4px 0 4px; }
+  .cap { font-size:13px; color:#5a6472; margin:0 0 14px; }
+  .mermaid { display:flex; justify-content:center; }
+  .note { font-size:13px; color:#5a6472; line-height:1.75; }
+  .note b { color:#1b1e24; }
+  code { background:#eef0f3; padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+</head>
+<body>
+  <h1>UV-PAM 扫描层级与时钟触发</h1>
+  <p class="sub">A-scan / B-scan / C-scan / Volume 怎么套 · 两个时钟域怎么被触发桥接 &nbsp;|&nbsp; 配套笔记 §20</p>
+
+  <div class="card">
+    <h2>① 扫描层级:层层包含(不是并列)</h2>
+    <p class="cap">每加一个电机轴,就多套一层循环。A-line 是最小原子。</p>
+    <div class="mermaid">
+flowchart LR
+    AL["A-line<br/>1 触发 = 1 采集"]
+    PX["1 像素"]
+    BS["B-scan<br/>一行(帧)"]
+    CS["C-scan<br/>一面(帧)"]
+    VOL["Volume<br/>一体(帧)"]
+    AL -->|"× Subpixel Num<br/>同点重复取平均"| PX
+    PX -->|"× Xn · X 电机"| BS
+    BS -->|"× Yn · Y 电机"| CS
+    CS -->|"× Zn · Z 电机"| VOL
+    ASC["A-Scan 帧<br/>原地打点·不动电机<br/>(调焦/调试用)"] -.->|"同一批触发,只是不走电机"| AL
+    classDef atom fill:#e7f0fb,stroke:#4a80c8,color:#12325c;
+    classDef scan fill:#e9f5ee,stroke:#4f9d69,color:#1f5233;
+    classDef asc fill:#fbf1df,stroke:#c98a2b,color:#5e3c07;
+    class AL,PX atom;
+    class BS,CS,VOL scan;
+    class ASC asc;
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 两个时钟域,被"触发"这根线桥接</h2>
+    <p class="cap">域①(DO 输出)管「何时发生」,域②(Alazar)管「采多细」。bit6 触发是二者的桥。</p>
+    <div class="mermaid">
+flowchart TB
+    REF["10 MHz 参考钟"]
+    DO["DO Sample Rate 200k/500k Hz<br/><b>域①:何时发生</b>(播 8-bit 波形)"]
+    REF --> DO
+    DO -->|"÷ Trig Rate"| TRIG["触发间隔<br/>200k/100k = 2 样本 → 100 kHz"]
+    DO -->|"÷ Motor Pulse Rate"| MOT["电机步间隔<br/>200k/16k = 12.5 ⚠ 非整除"]
+    TRIG --> BIT6["bit6 DAQ 触发脉冲"]
+    BIT6 -->|"进 Alazar 触发输入"| ALZ["<b>域②:Alazar 采集</b><br/>DAQ Sample Rate 100 MS/s"]
+    ALZ --> ALINE["一条 A-line<br/>ALength 点 × 10 ns<br/>(Trig Delay 后开始)"]
+    MOT --> STG["X/Y/Z 电机步进"]
+    classDef d1 fill:#e7f0fb,stroke:#4a80c8,color:#12325c;
+    classDef warn fill:#fbeceb,stroke:#c85a54,color:#6e2420;
+    classDef d2 fill:#e9f5ee,stroke:#4f9d69,color:#1f5233;
+    class REF,DO,TRIG,BIT6,STG d1;
+    class MOT warn;
+    class ALZ,ALINE d2;
+    </div>
+  </div>
+
+  <div class="card note">
+    <h2>要点</h2>
+    <p><b>层级:</b>A-line 是原子;<code>A-Scan 帧</code>=原地反复采(不走电机,调焦用);<code>B</code>=加 X 电机扫一行;<code>C</code>=加 Y 电机扫一面;<code>Volume</code>=加 Z 扫一体。前面板 <code>x count in B-scan loop</code> / <code>y count in C-scan loop</code> 就是这些循环的计数器。</p>
+    <p><b>两个时钟:</b>域① <code>DO Sample Rate</code>(200k/500k)是波形时间轴,决定触发和电机脉冲「何时」发出;域② <code>DAQ Sample Rate</code>(100 MS/s)决定每条 A-line 采多细(ALength 点、每点 10 ns)。<b>bit6 触发把慢钟(何时采)和快钟(采多细)接起来。</b></p>
+    <p style="color:#a55;"><b>点数问题所在:</b>域① 里 <code>DO ÷ Motor = 200k/16k = 12.5</code>(ENdaq 是 500k/16k=31.25)非整除,整数除法排电机脉冲时与触发脉冲数对不齐 → 每行 A-line 数可能≠ Xn×Subpx。</p>
+  </div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'base',
+    themeVariables: { fontFamily: '-apple-system, PingFang SC, Microsoft YaHei, sans-serif', fontSize:'14px' },
+    flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 45, rankSpacing: 55 } });
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UV-PAM 触发机制与信号流向</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+         margin:0; padding:28px; background:#f5f6f8; color:#1b1e24; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  .sub { color:#5a6472; font-size:14px; margin:0 0 20px; }
+  .card { background:#fff; border:1px solid #e3e6ea; border-radius:14px; padding:20px 20px 8px;
+          box-shadow:0 1px 3px rgba(0,0,0,.06); margin-bottom:22px; }
+  .legend { display:flex; gap:20px; flex-wrap:wrap; font-size:13px; color:#41474f; margin:0 0 18px; }
+  .legend span { display:inline-flex; align-items:center; gap:7px; }
+  .dot { width:13px; height:13px; border-radius:3px; display:inline-block; }
+  .mermaid { display:flex; justify-content:center; }
+  h2 { font-size:16px; margin:6px 0 12px; }
+  .note { font-size:13px; color:#5a6472; line-height:1.7; }
+  .note b { color:#1b1e24; }
+  code { background:#eef0f3; padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+</head>
+<body>
+  <h1>UV-PAM 触发机制与信号流向</h1>
+  <p class="sub">一次 B-scan 的信号怎么走 · 两版触发机制对照 &nbsp;|&nbsp; 配套《UV-PAM 交接笔记》§18</p>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#4a80c8"></i>数字/控制信号(NI 卡)</span>
+    <span><i class="dot" style="background:#c85a54"></i>ENlaser 路径:命令式 · 开环 ⚠</span>
+    <span><i class="dot" style="background:#4f9d69"></i>ENdaq 路径:探真光 · 闭环 ✓</span>
+    <span><i class="dot" style="background:#c98a2b"></i>超声 / 采集数据</span>
+  </div>
+
+  <div class="card">
+    <div class="mermaid">
+flowchart TB
+    LV["① LabVIEW<br/>预先算好一整条 DO 波形数组"]
+    NI["② NI 数字 I/O 卡<br/>按 DO Sample Rate 播出 P0.0–P0.7"]
+    LV --> NI
+    NI -->|"P0.0–P0.5 脉冲+方向"| DRV["Zolix SR2 步进驱动 ×3"]
+    DRV --> STG["③ X/Y/Z 电动台<br/>光栅扫描(回程不采数据)"]
+
+    subgraph EL["🔴 ENlaser:命令式 · 开环(需 ~240μs 延迟补偿)"]
+      direction TB
+      E7["NI P0.7 → 激光触发输入"] --> ELAS["激光器:命令即发"]
+      ELAS -.->|"启动延迟 ~240μs"| ELIGHT["光实际晚到 → 对不齐"]
+      E6["NI P0.6 → Alazar EXT TRIG"] --> ECAP["命令即采(赌延迟恒定)"]
+    end
+
+    subgraph ED["🟢 ENdaq:探真光 · 闭环(无需补偿)"]
+      direction TB
+      DLAS["激光器:常亮"] --> DLIGHT["真实光脉冲"]
+      DLIGHT --> DPD["光电二极管"]
+      DPD --> DAND["AND 与门"]
+      D6["NI P0.6 → AND 使能窗口"] --> DAND
+      DAND --> DCHB["Alazar Channel B<br/>Trig Source = Chan_B"]
+    end
+
+    NI --> EL
+    NI --> ED
+
+    STG --> SMP["④ 样品被激光激发<br/>发出超声"]
+    SMP --> TRD["换能器 → 放大器"]
+    TRD --> ALZ["⑤ Alazar 采集卡 CH1<br/>每个触发抓一条 A-line"]
+    ECAP --> ALZ
+    DCHB --> ALZ
+    ALZ --> BACK["⑥ 回 LabVIEW<br/>max − min → 存 .dat"]
+
+    classDef ni fill:#e7f0fb,stroke:#4a80c8,color:#12325c;
+    classDef laser fill:#fbeceb,stroke:#c85a54,color:#6e2420;
+    classDef daq fill:#e9f5ee,stroke:#4f9d69,color:#1f5233;
+    classDef data fill:#fbf1df,stroke:#c98a2b,color:#5e3c07;
+    class LV,NI,DRV,STG ni;
+    class E7,ELAS,ELIGHT,E6,ECAP laser;
+    class DLAS,DLIGHT,DPD,DAND,D6,DCHB daq;
+    class SMP,TRD,ALZ,BACK data;
+    </div>
+  </div>
+
+  <div class="card note">
+    <h2>怎么读这张图</h2>
+    <p><b>共同主干(蓝):</b>LabVIEW 先在内存算好一条数字波形数组 → NI 卡按 <code>DO Sample Rate</code> 把 8 根线一次性播出去。P0.0–P0.5 驱动电动台走光栅;P0.6/P0.7 发触发。</p>
+    <p><b>ENlaser(红):</b>P0.7 命令激光发光、P0.6 命令 Alazar 采集。激光有约 240&nbsp;μs 启动延迟,"命令采集"与"光真正到达"对不齐,只能靠 <code>Laser warmup 1.00024 s</code> 之类的延迟补偿去凑——<b>开环,赌延迟恒定</b>,一漂移就错位。</p>
+    <p><b>ENdaq(绿):</b>激光常亮,光电二极管探到每一发真实光脉冲;P0.6 当"使能窗口"、photodiode 当"真实时刻",两者经 AND 与门 → 送 Alazar Channel B 当触发源。<b>跟着真实出光走 → 延迟问题被硬件绕过</b>(闭环、自校正)。代价是多了 AND 门/photodiode 的硬件依赖。</p>
+    <p><b>回到数据(黄):</b>样品被激发发超声 → 换能器/放大器 → Alazar CH1 每个触发抓一条 A-line → 回 LabVIEW 取 <code>max−min</code> 当像素值 → 存 <code>.dat</code>。</p>
+    <p style="margin-top:14px; color:#8a5;"><b>一句话:</b>ENlaser =「我命令、赌延迟」;ENdaq =「等真光、真光来了才采」。后者原理上更稳,但非整除计数问题(500000/16000=31.25)与 AND 门质量仍需实测。</p>
+  </div>
+
+<script>
+  mermaid.initialize({ startOnLoad: true, theme: 'base',
+    themeVariables: { fontFamily: '-apple-system, PingFang SC, Microsoft YaHei, sans-serif', fontSize:'14px' },
+    flowchart: { htmlLabels: true, curve: 'basis', nodeSpacing: 45, rankSpacing: 55 } });
+</script>
+</body>
+</html>
