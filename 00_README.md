@@ -57,6 +57,7 @@ claude.ai 网页 Project 通过 GitHub 集成直接读本仓库（10/4 起，不
 - `CLAUDE.md`：MATLAB 重写项目的规则和文件位置
 - `docs/`：01 硬件与接线、02 LabVIEW 程序地图、03 写法对照、04/07 四周计划（07 有英文版）、05 参数字典、06 现有代码与进度、08 LabVIEW 清单、09 两天冲刺清单、**工作日志.md（跨账号进度接力棒）**
 - `LabviewPAM/`：只在实验室电脑本地，不进 git
+- `参考_Maria_control_py/`：Maria 的 Python 版扫描+采集代码（10/3），参考用不改；`README.md` 里有参数表和要问她的问题
 
 ## 07_MATLAB/
 - A-line 脚本（`ats9462_aline_test_revised.m` 是当前版）、`bscan_test.m`、`test2.m`（X 电机）、`aline_data/`（10/1、10/3 数据）
