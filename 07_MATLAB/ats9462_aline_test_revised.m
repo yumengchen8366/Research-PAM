@@ -78,7 +78,7 @@ cfg.triggerLevelCode = 150; % 触发阈值的编码（0–255，无单位）。1
 cfg.externalTriggerCouplingId = DC_COUPLING;
 cfg.externalTriggerRangeId    = ETR_5V; 
 cfg.saveData = true;   % 是否保留这个数据
-cfg.note = '1.3 amp CH2 0-200mV ph324 range0.4V';
+cfg.note = '1.8 PD trigger: NPL45C, gen CH1 1kHz 0-1V -> laser TRIG IN; PDA10A2 Top 2.9V/15ns -> ATS TRIG IN';
 cfg.outputFolder = fullfile(pwd, 'aline_data');
 
 %% [03] 检查参数，并把物理数值转换成 SDK 枚举

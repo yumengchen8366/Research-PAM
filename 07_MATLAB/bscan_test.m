@@ -1,4 +1,4 @@
-﻿%% B-scan：X 滑台匀速扫描 + 激光触发 + ATS9462 每个触发采一条 A-line
+%% B-scan：X 滑台匀速扫描 + 激光触发 + ATS9462 每个触发采一条 A-line
 %
 %  原理（全部由 Dev1 同一个硬件时钟产生，严格同步）：
 %    P0.0 X STEP   ：加速 → 匀速 → 减速（→ 可选自动返回起点）
@@ -20,7 +20,7 @@ SAVE_DATA       = false;   % true：保存到 bscan_data 文件夹
 %% 1. 扫描参数
 SCAN_LENGTH_UM    = 2000;  % B-scan 长度
 DX_UM             = 5;     % A-line 间距（必须是 UM_PER_PULSE 的整数倍）
-TRIG_RATE_HZ      = 1000;  % 激光 / 采集触发频率 = 每秒 A-line 数；扫描速度 = DX_UM x TRIG_RATE_HZ
+TRIG_RATE_HZ      = 800;  % 激光 / 采集触发频率 = 每秒 A-line 数；扫描速度 = DX_UM x TRIG_RATE_HZ
 DIR_SCAN          = 1;     % 扫描时 DIR 电平（1 或 0）
 RAMP_UM           = 200;   % 加速、减速各用多少距离（这段不采数据）
 START_FREQ_HZ     = 500;   % 加速起始步频
@@ -42,7 +42,7 @@ DIR_SETUP_S    = 100e-6;
 PAUSE_S        = 0.05;              % 扫描结束到返回之间的停顿
 
 % ATS9462（与 ats9462_aline_test_revised.m 一致）
-ATS.samplesPerALine   = 512;        % 每条 A-line 的点数（32 的倍数，>= 256）
+ATS.samplesPerALine   = 1024;        % 每条 A-line 的点数（32 的倍数，>= 256）
 ATS.sampleRate_Hz     = 180e6;
 ATS.inputRange_V      = 4;          % 0.2 / 0.4 / 0.8 / 2 / 4
 ATS.triggerLevelCode  = 150;        % ETR_5V 下约 0.87 V
