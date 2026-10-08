@@ -135,6 +135,7 @@ def main():
     ap.add_argument("--min-hits", type=int, default=5)
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--reindex", action="store_true", help="只重建 INDEX.md（导入网页对话后用）")
+    ap.add_argument("--changed", action="store_true", help="只导出 .jsonl 比已有 .md 新的会话（sync_pam 用）")
     ap.add_argument("--machine", default="Mac")
     ap.add_argument("--tool-chars", type=int, default=600, help="工具输出保留字符数，0 = 不导出")
     a = ap.parse_args()
@@ -148,6 +149,9 @@ def main():
     OUT.mkdir(exist_ok=True)
     n = 0
     for f in files:
+        if a.changed and not a.list and any(o.stat().st_mtime >= f.stat().st_mtime
+                                            for o in OUT.glob(f"*_{f.stem[:8]}.md")):
+            continue
         title, recs, hits, ts = load(f)
         if a.list:
             print(f"{(ts or '')[:10]}  hits={hits:<4} {f.stem[:8]}  {title}")

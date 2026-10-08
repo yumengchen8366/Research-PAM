@@ -6,7 +6,7 @@ Claude 的对话记录和记忆**不跟账号走、也不跨电脑**，所以：
 不能只留在对话或本机记忆里。
 
 ## 开工先做
-1. `git pull`（不在 git 里就先看 `tools/同步与多账号使用说明.md`）。
+1. 提醒我先双击仓库根目录的 `sync_pam.cmd`（Mac：`sync_pam.command`），取回别处的最新内容；我已经双击过就直接 `git pull`。
 2. 读 `06_控制程序/docs/工作日志.md` 的最后 3 条 —— 这是跨账号、跨电脑的进度接力棒。
 3. 按任务再读：
    - 会议、参数、进度、要问 Rui 的：`02_笔记与上下文/UV-PAM-master.md`（§19 当前进度、§20 待确认）+ `context-conflicts.md`（参数账本）。只读相关节。
@@ -18,7 +18,7 @@ Claude 的对话记录和记忆**不跟账号走、也不跨电脑**，所以：
 1. 在 `06_控制程序/docs/工作日志.md` 末尾加一条：`**日期｜模块（机器/账号）**` + 做了什么 / 结果 / 下次第一步。
 2. 新确认的事实写进 docs 里对应的文件；改 `UV-PAM-master.md` 或 `context-conflicts.md` **前先问我同意**，并更新文件头日期。
 3. 导出本次对话：`python3 tools/export_pam_chats.py --ids <本会话id前8位> --machine <Mac新号|LabPC旧号|…>`（Windows 用 `python`；实验室电脑没装 Python，用 `powershell -ExecutionPolicy Bypass -File tools/export_pam_chats.ps1 -Ids <id前8位> -Machine <…>`，输出格式相同）。
-4. `git add -A && git commit -m "<日期> <模块>: <一句话>" && git push`。push 被拒就先 `git pull --rebase`，有冲突停下来告诉我。
+4. `git add -A && git commit -m "<日期> <模块>: <一句话>"`，然后提醒我双击 `sync_pam.cmd` / `sync_pam.command`（它会再导出一遍有更新的会话、和 GitHub 合并（merge）、push）。合并有冲突时脚本会停下、不推送：逐段对比两边，列给我确认后再合并，不要直接选一边。
 
 ## 协作方式
 - 中文为主，保留英文术语；对导师说的话给中英两版。

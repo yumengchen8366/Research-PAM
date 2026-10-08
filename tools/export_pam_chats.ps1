@@ -5,10 +5,13 @@
 #   powershell -ExecutionPolicy Bypass -File tools\export_pam_chats.ps1 -List
 #   powershell -ExecutionPolicy Bypass -File tools\export_pam_chats.ps1 -Ids 08539d41 -Machine "LabPC(新账号)"
 #   powershell -ExecutionPolicy Bypass -File tools\export_pam_chats.ps1 -Reindex
+#   ... -Src <目录> -All -Changed      # sync_pam.cmd 用：该目录下所有会话，只导出 .jsonl 比已有 .md 新的
 # 默认在 ~/.claude/projects 下所有子目录里找 .jsonl；-Src 可指定别的目录。
 param(
     [string[]]$Src,
     [string[]]$Ids = @(),
+    [switch]$All,
+    [switch]$Changed,
     [switch]$List,
     [switch]$Reindex,
     [string]$Machine = "LabPC",
@@ -159,9 +162,12 @@ foreach ($f in $files) {
         }
         continue
     }
-    if (-not ($Ids | Where-Object { $stem.StartsWith($_) })) { continue }
+    if (-not $All -and -not ($Ids | Where-Object { $stem.StartsWith($_) })) { continue }
+    $old = @(Get-ChildItem -LiteralPath $Out -Filter "*_$($stem.Substring(0, 8)).md" -File)
+    if ($Changed -and $old.Count -gt 0 -and ($old | Where-Object { $_.LastWriteTime -ge $f.LastWriteTime })) { continue }
     $r = Load $f.FullName
-    Get-ChildItem -LiteralPath $Out -Filter "*_$($stem.Substring(0, 8)).md" -File | Remove-Item -Confirm:$false  # 同一会话重新导出时覆盖
+    if ($r.recs.Count -eq 0) { continue }  # 空会话不导出
+    $old | Remove-Item -Confirm:$false  # 同一会话重新导出时覆盖
     $date = if ($r.first) { ([string]$r.first).Substring(0, 10) } else { "0000-00-00" }
     $name = "{0}_{1}_{2}.md" -f $date, (SafeName $r.title), $stem.Substring(0, 8)
     [IO.File]::WriteAllText((Join-Path $Out $name), (Render $f.FullName $r.title $r.recs), $Utf8)

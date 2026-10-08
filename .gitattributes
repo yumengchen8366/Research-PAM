@@ -1,0 +1,3 @@
+# 两边都会往里追加的文件：合并时两边新加的行都保留，不算冲突
+06_控制程序/docs/工作日志.md merge=union
+08_对话记录/INDEX.md merge=union
