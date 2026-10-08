@@ -17,7 +17,7 @@ Claude 的对话记录和记忆**不跟账号走、也不跨电脑**，所以：
 ## 收工必做（每个窗口结束前）
 1. 在 `06_控制程序/docs/工作日志.md` 末尾加一条：`**日期｜模块（机器/账号）**` + 做了什么 / 结果 / 下次第一步。
 2. 新确认的事实写进 docs 里对应的文件；改 `UV-PAM-master.md` 或 `context-conflicts.md` **前先问我同意**，并更新文件头日期。
-3. 导出本次对话：`python3 tools/export_pam_chats.py --ids <本会话id前8位> --machine <Mac新号|LabPC旧号|…>`（Windows 用 `python`）。
+3. 导出本次对话：`python3 tools/export_pam_chats.py --ids <本会话id前8位> --machine <Mac新号|LabPC旧号|…>`（Windows 用 `python`；实验室电脑没装 Python，用 `powershell -ExecutionPolicy Bypass -File tools/export_pam_chats.ps1 -Ids <id前8位> -Machine <…>`，输出格式相同）。
 4. `git add -A && git commit -m "<日期> <模块>: <一句话>" && git push`。push 被拒就先 `git pull --rebase`，有冲突停下来告诉我。
 
 ## 协作方式
@@ -49,5 +49,5 @@ Claude 的对话记录和记忆**不跟账号走、也不跨电脑**，所以：
 | `06_控制程序/` | MATLAB 重写项目的知识库（原实验室电脑 `PAM_controlProgram`）：docs/01–09、工作日志、tools |
 | `07_MATLAB/` | A-line/B-scan 脚本、`aline_data/`、`System_test_09_25/`、`AlazarInclude/`（查常量）、`_Mac下载版本/` |
 | `08_对话记录/` | 所有 PAM 对话导出的 Markdown + `INDEX.md`；`claude-memory/` 是两台机器旧账号的 Claude 记忆 |
-| `tools/` | `export_pam_chats.py`（导出对话）、`同步与多账号使用说明.md` |
+| `tools/` | `export_pam_chats.py` / `.ps1`（导出对话；.ps1 给没装 Python 的 Windows）、`同步与多账号使用说明.md` |
 | `.claude/skills/research-progress/` | 项目 skill（Claude Code 打开本文件夹自动可用） |
