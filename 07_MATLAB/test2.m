@@ -14,8 +14,8 @@ RUN_HARDWARE = false;              % false：只计算并画图；确认无误�
 COUNT_CHECK  = false;              % true：用 ctr1 实测发出的脉冲数，需先用导线把 P0.0 并接到 P1.3 (PFI3)
 
 %% 1. 每次移动只改这两行
-MOVE_UM    = -10000;                 % 移动距离 um：正数 = 一个方向，负数 = 反方向
-SPEED_MM_S = 4.8;                    % 移动速度 mm/s（上限 20）
+MOVE_UM    = -2400;                 % 移动距离 um：正数 = 一个方向，负数 = 反方向
+SPEED_MM_S = 4;                    % 移动速度 mm/s（上限 20）
 
 %% 2. 硬件参数（接线和驱动器设置不变时不用改）
 STEP_LINE     = "port0/line0";     % P0.0 → SR2 STEP

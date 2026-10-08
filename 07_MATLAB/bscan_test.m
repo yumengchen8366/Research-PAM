@@ -16,6 +16,7 @@ RUN_HARDWARE    = false;   % false：只生成时序并画图，不碰任何硬�
 LASER_ENABLE    = false;   % false：P0.7 不发激光触发
 RETURN_TO_START = true;    % 扫描完自动以 RETURN_SPEED 退回起点
 SAVE_DATA       = false;   % true：保存到 bscan_data 文件夹
+COUNT_CHECK     = true;    % true：用 ctr1 数 P0.6 的上升沿，需先用导线把 USER 1 端子（P0.6）并接到 PFI3 (P1.3)
 
 %% 1. 扫描参数
 SCAN_LENGTH_UM    = 2000;  % B-scan 长度
@@ -153,8 +154,23 @@ end
 
 clear d dq cnt
 daqreset
+
+if COUNT_CHECK
+    cnt = daq("ni");
+    addinput(cnt, "Dev1", "ctr1", "EdgeCount");   % 计数输入在 PFI3 (P1.3)
+    resetcounters(cnt);
+    c0 = read(cnt, "OutputFormat", "Matrix");
+end
+
 doLines = [STEP_LINE DIR_LINE DAQTRIG_LINE LASER_LINE];
 raw = runBscan(do, fs, doLines, CLOCK_AI, Nx, ATS);
+
+if COUNT_CHECK
+    c1 = read(cnt, "OutputFormat", "Matrix");
+    nTrigCount = c1 - c0;
+    fprintf('ctr1 实测 P0.6 上升沿：%d（应为 %d）\n', nTrigCount, Nx);
+    clear cnt
+end
 
 bscan = struct();
 bscan.volts = (double(raw) / 65535 * 2 - 1) * ATS.inputRange_V;   % samples x Nx
@@ -165,6 +181,9 @@ bscan.params = struct('SCAN_LENGTH_UM', SCAN_LENGTH_UM, 'DX_UM', DX_UM, ...
     'TRIG_RATE_HZ', TRIG_RATE_HZ, 'LASER_ENABLE', LASER_ENABLE, ...
     'UM_PER_PULSE', UM_PER_PULSE, 'fs', fs, 'ATS', ATS);
 bscan.time = datetime('now');
+if COUNT_CHECK
+    bscan.trigCount = nTrigCount;               % ctr1 数到的 P0.6 上升沿个数
+end
 
 sig = bscan.volts - median(bscan.volts, 1);     % 每条 A-line 减去自身中值
 env = abs(hilbert(sig));
@@ -173,6 +192,26 @@ imagesc(bscan.x_um / 1000, bscan.t_us, env);
 xlabel('X (mm)'); ylabel('Time after trigger (us)'); colorbar
 title(sprintf('B-scan 包络  %d A-lines, 激光 %s', Nx, string(LASER_ENABLE)));
 fprintf('完成：采到 %d 条 A-line，rail 点数 %d\n', size(raw, 2), nnz(raw == 0 | raw == 65535));
+
+%% 快速检查：每条脉冲个数、上升沿时间
+v  = bscan.volts;
+th = 0.5;                          % V，测试脉冲 1 V 的一半
+dt = 1 / ATS.sampleRate_Hz;
+nEdge = zeros(1, Nx);
+tEdge = nan(1, Nx);
+for k = 1:Nx
+    above = v(:,k) > th;
+    nEdge(k) = nnz(diff(above) == 1);
+    i = find(diff(above) == 1, 1);  % 第一个上升沿：v(i) <= th < v(i+1)
+    if ~isempty(i)
+        frac = (th - v(i,k)) / (v(i+1,k) - v(i,k));          % 0~1：阈值落在两个点之间的哪个位置
+        tEdge(k) = (ATS.triggerDelay + i - 1 + frac) * dt;    % 秒
+    end
+end
+fprintf('每条正好 1 个沿：%d/%d；异常的列：%s\n', nnz(nEdge == 1), Nx, mat2str(find(nEdge ~= 1)));
+fprintf('上升沿 %.4f ~ %.4f us，标准差 %.2f ns，峰峰 %.2f ns\n', ...
+    min(tEdge)*1e6, max(tEdge)*1e6, std(tEdge, 'omitnan')*1e9, (max(tEdge)-min(tEdge))*1e9);
+
 
 if SAVE_DATA
     outDir = fullfile(pwd, 'bscan_data');
