@@ -37,6 +37,15 @@
 - **C-scan：** 整个扫描的数据装得进电脑 RAM，但装不进板载内存。所以扫描过程中必须有人把数据取走：要么每行单独 arm、在回程时把这一行取完（Control_py 是每行重新 arm），要么改成后台输出时序（`start`/`preload`），让 MATLAB 在扫描时继续取 buffer。第 3 周再定。
 - **如果以后加采 CH B（光电二极管）：** 数据量翻倍，buffer 里两个通道的数据怎么排列，要查 SDK 手册的 buffer 格式（**待确认**）。
 
+## 三点五、`bscan_test.m` 改成环形 buffer 的计划（10/10 整理，还没动代码）
+现在（第 245–310 行）：按 `Nx / recordsPerBuffer` 个（400 条时是 8 个）分配 buffer，全部 Post → `StartCapture` → `readwrite` 阻塞约 2.3 s → 依次 Wait、拷出。缺点：没法中途停（07 测试 ④），扫描过程中拿不到数据，buffer 个数随条数增长（C-scan 要 3200 个、328 MB 锁页内存）。
+
+分两步改，每步单独验证：
+1. **只改 ATS 一侧**：分配 4 个，全部 Post；`readwrite` 不动；返回后 `for i = 1:nBuf`：Wait 第 `mod(i-1,4)+1` 个 → 拷到 raw 第 i 段 → 如果 `i + 4 <= nBuf` 就重新 Post 回去。`readwrite` 阻塞期间的数据靠板载内存先接住。验收：400/400、ctr1 = 400、上升沿统计和全部预先提交时一致，不报 `ApiBufferOverflow`（= §四 第 4 条）。
+2. **再改 NI 一侧**：`readwrite` → `preload` + `start`，后台输出，循环在扫描进行中就开始跑；加停止标志：要停就 `stop(dq)`、`AlazarAbortAsyncRead`，报告完成了 i × 50 个位置，并按 NI 已经输出的采样点数推算电机位置。
+
+要确认：每个 buffer 的字节数是 4096 的倍数（102,400 ✔，条数取偶数）；每秒装满的 buffer 数 < 2 kHz（16 个/s ✔）；板载内存 64 M 点 ≈ 65,000 条 ≈ 800 Hz 下 80 s（每通道还是合计，待确认）；一次最多能 Post 几个（SDK 手册，待确认）；NI 后台输出能不能配合"借 AI 时钟"（先在检查模式试，`dq.Running`、AI 要不要读出来，待确认）；中途停止后不加速直接停会不会丢步（4 mm/s 应该不会，用卡尺确认）；第一个 buffer 的 Wait 超时要覆盖加速段（约 0.15 s，现在 2000 ms ✔）。
+
 ## 四、待确认
 1. 导师说的 "dual" 是 dual-port、dual-channel，还是别的（问导师）
 2. 64 M 点是每个通道还是合计（ATS9462 用户手册）
