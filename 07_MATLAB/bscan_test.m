@@ -212,6 +212,7 @@ fprintf('每条正好 1 个沿：%d/%d；异常的列：%s\n', nnz(nEdge == 1), 
 fprintf('上升沿 %.4f ~ %.4f us，标准差 %.2f ns，峰峰 %.2f ns\n', ...
     min(tEdge)*1e6, max(tEdge)*1e6, std(tEdge, 'omitnan')*1e9, (max(tEdge)-min(tEdge))*1e9);
 
+fprintf('脉冲高 %.3f ~ %.3f V\n', min(max(v)), max(max(v)));
 
 if SAVE_DATA
     outDir = fullfile(pwd, 'bscan_data');
