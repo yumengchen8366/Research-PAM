@@ -1,6 +1,6 @@
 # 参数账本与冲突清单
 
-> **最近更新**：2026-09-23 v2（v1 建于 2026-09-23 上午，只比 A/B 两份；v2 加入 ⟨G⟩ 9/23 三份 + ⟨N⟩ Drive 交接笔记 8/07 版，并重新裁决）。
+> **最近更新**：2026-10-11（#1 补第三个说法：Maria control_py 10/8 版写死 5 µm/pulse；裁决未改）。之前：2026-09-23 v2（v1 建于 2026-09-23 上午，只比 A/B 两份；v2 加入 ⟨G⟩ 9/23 三份 + ⟨N⟩ Drive 交接笔记 8/07 版，并重新裁决）。
 > **来源缩写**：⟨C⟩ = Claude 8/30 `UV-PAM-context.md`；⟨G⟩ = ChatGPT 9/21 `PAM_project_context_for_new_chat.md` + 9/23 Handoff / Meeting Prep / New Chat Context；⟨N⟩ = Drive `PAM_LabVIEW_交接笔记.md` v0.9（8/07 版，38 KB）。
 > **规则**：标「⚠ 待确认」的数值**不进计算、不进扫描设计**。有结论先写这里（结论 + 证据位置 + 日期），再同步到 `claude/UV-PAM-master.md`。
 
@@ -10,7 +10,7 @@
 
 | # | 项目 | 说法一 | 说法二 | 为什么要紧 | 怎么核实 | **9/23 裁决** |
 |---|---|---|---|---|---|---|
-| 1 | **电机 X 轴 µm/pulse** | ⟨N⟩ §3 [文件确认]：1 pulse = 10 µm（200 step 设置，截图/README 图例）；⟨C⟩ 沿用 | ⟨G⟩ [实测]：手动 Move X 20,000 pulses ≈ 1 cm → **0.5 µm/pulse** | 差 20 倍。决定 H1 是否成立（16 kHz × 10 µm = 160 mm/s 超额定 8 倍 vs 16 kHz × 0.5 µm = 8 mm/s 在额定内）。0.5 µm/pulse ↔ SR2 约 2000（1 mm 导程）或 4000（2 mm 导程）step/rev | **Step 0**：拍三台 SR2 的 SW5–SW8 + 读台子型号标签（导程）；DG852 N-cycle burst 发正好 N 个脉冲量位移 | **⚠ 待确认。** 实测证据强于图例，工作中先按 0.5 µm/pulse 做条件计算，但每次写「[条件计算，X=0.5 µm/pulse]」。「dX=100 ≈ 1 cm」那半句**撤回**——那是 Xn≈200 的整行行程，(200−1)×100×0.5 µm = 9.95 mm，与 0.5 µm 相符，不是矛盾（⟨G⟩ Handoff §5.3） |
+| 1 | **电机 X 轴 µm/pulse** | ⟨N⟩ §3 [文件确认]：1 pulse = 10 µm（200 step 设置，截图/README 图例）；⟨C⟩ 沿用 | ⟨G⟩ [实测]：手动 Move X 20,000 pulses ≈ 1 cm → **0.5 µm/pulse** | 差 20 倍。决定 H1 是否成立（16 kHz × 10 µm = 160 mm/s 超额定 8 倍 vs 16 kHz × 0.5 µm = 8 mm/s 在额定内）。0.5 µm/pulse ↔ SR2 约 2000（1 mm 导程）或 4000（2 mm 导程）step/rev | **Step 0**：拍三台 SR2 的 SW5–SW8 + 读台子型号标签（导程）；DG852 N-cycle burst 发正好 N 个脉冲量位移 | **⚠ 待确认。** 实测证据强于图例，工作中先按 0.5 µm/pulse 做条件计算，但每次写「[条件计算，X=0.5 µm/pulse]」。「dX=100 ≈ 1 cm」那半句**撤回**——那是 Xn≈200 的整行行程，(200−1)×100×0.5 µm = 9.95 mm，与 0.5 µm 相符，不是矛盾（⟨G⟩ Handoff §5.3）。**10/11 补第三个说法**：Maria 的 control_py（10/3、10/8 两版）写死 4 mm 导程 × 200 step/rev × 1/4 细分 = **5 µm/pulse** [文件确认，`06_控制程序/参考_Maria_control_py/2026-10-08/control_card/C_scan.py:24-26`、`:36`；她的"0.5 mm、每位置 0.01 mm = 2 脉冲"就是按这个算的]。没看到她的实测。和我们的实测差 10 倍：10/4 实测 0.5 µm/pulse、10/7 手轮量全行程约 27 圈 ≈ 54 mm → 导程 2 mm（`06_控制程序/CLAUDE.md`、工作日志 10/7）。若是同一台滑台、同一个 SR2 设置，她的 0.5 × 0.5 mm 扫描实际只有 50 × 50 µm [条件计算，X=0.5 µm/pulse]。是不是同一套硬件、她的 1/4 细分是不是读拨码得来的 → ⚠ 待问 Maria（`参考_Maria_control_py/2026-10-08/README.md` §7 第 1 问）。另：docs/11 记的实验室电脑上更早一版是"20 个微步 = 10 µm"（= 0.5 µm/pulse，和我们一致），到 10/3 版才变成 2 脉冲 = 10 µm。可能只是她改了代码里的假设，也可能有人改了 SR2 拨码；如果拨码被改过，我们 10/4 的 0.5 µm/pulse 也要重测（下次上硬件前先拍 SW5–SW8） |
 | 2 | **DO Sample Rate** | ⟨C⟩⟨N⟩ §3：200 kHz | ⟨G⟩：500 kS/s（2 µs/样本）；早期示例 100 kS/s | 200k÷16k = 12.5，500k÷16k = 31.25，取整跳动幅度不同 | — | **✅ 解开（9/23，⟨N⟩ §6 [文件确认]）**：两个程序版本。**SlowUVscan_ENlaser = 200 kHz；SlowScan_ENdaq = 500 kHz**。用户 9 月在 "Enable DAQ" 文件夹跑 → ENdaq → 500 kS/s 正确。100 kS/s 是早期示例。**每次记录 DO rate 必须同时记程序版本。** |
 | 3 | **激光重复频率 / 型号** | ⟨C⟩⟨N⟩：266 nm UV 激光头，可调 100 kHz–2 MHz；面板 Trig Rate 100 kHz、Galvo 区 Laser Freq 200 kHz；论文 50 kHz | ⟨G⟩ [文件确认，NPL 手册 Rev. J p.5]：台架上是 **NPL45C 450 nm**，无内触发，外触发上限 **50 kHz**，曾用函数发生器 20 kHz | 100/200 kHz 超 NPL45C 上限；450 nm 不是 UV | 查激光器铭牌 + 实际接线 + photodiode | **✅ 部分解开（用户 9/23 确认）**：**现在台架上接的是 NPL45C（450 nm）**，266 nm UV 是复现目标光源（在不在实验室、状态如何 ⚠ 待确认）。面板 100 kHz / 200 kHz 是 ENlaser 时代或旧值，**对 NPL45C 不适用**。Trig 100k vs Laser Freq 200k 面板不一致仍 ⚠ 待确认（⟨N⟩ §25.2 同族） |
 | 4 | **bit6 / bit7 含义** | ⟨N⟩ §2：bit6 = DAQ Trigger、bit7 = Laser Trigger（I/O 页）；⟨N⟩ §22.1/§25.1 [实测]：ENdaq **C-Scan 帧** bit6 = GATE TRIG 连续高电平门，无 bit7 生成 | ⟨G⟩ [实测局部 buffer]：9 月 B-scan buffer 里 bit6/bit7 **同时以 5 样本间隔脉冲 20 次**（U8=192），再接 dX 个 STEP | 决定「每位置几个 laser pulse」怎么答；决定 ENdaq 下 bit7 是否接线 | 打开 ENdaq Main.vi **Start B-Scan 帧**，看波形生成区是 GATE TRIG 还是两个 GEN SKIP PULSE；示波器同测 P0.6 / photodiode / AND 输出 / Chan_B | **⚠ 待确认（新编号 #8 并入此条）**。可能解释：B-Scan 帧和 C-Scan 帧生成方式不同（⟨N⟩ §20.3 描述 B-Scan 帧用两个 GEN SKIP PULSE，§22.1 描述 C-Scan 帧用 GATE TRIG）。条件推断：那 20 个触发 = Subpixel Num = 20 |
@@ -44,7 +44,7 @@
 | Pulses/Buffer | — | — | 2400 | ✅ |
 | Subpixel Num | — | 「20 个触发」 | 20（每像素 A-line 数） | ✅ 值；「20 个触发 = Subpixel」⚠ 推断 |
 | 参考时钟 | — | 10 MHz | 10 MHz | ✅ ≠ 任何输出率 |
-| X µm/pulse | 10 µm（沿用笔记） | 0.5 µm [实测] | 10 µm（图例） | ⚠ #1 |
+| X µm/pulse | 10 µm（沿用笔记） | 0.5 µm [实测] | 10 µm（图例） | ⚠ #1（10/11：Maria 代码写 5 µm，见 #1） |
 | Y / Z µm/pulse | — | 未标定 | — | ⚠ 未测 |
 | Move X/Y/Z 面板值 | 8000 IN kx 0.25 / 200 RIGHT ky 0.9 / 320 UP kz 0.25 | kx=0.25、−0.5、1 试过 | — | 8/30 快照 |
 | dX / dY / dZ 面板值 | 2000 / 1 / 4 | dX=2/4/8/20/100/200 试过 | dX=8, Xn=2000 | 随运行变 |
