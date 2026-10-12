@@ -1,0 +1,106 @@
+
+import importlib.util
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+
+ARMED_MARKER = "Acquisition started."
+
+# ---- scan geometry, taken from the control-card script -----------------------
+script_directory = Path(__file__).resolve().parent
+digitizer_script = script_directory / "digitizer" / "TS_BC.py"
+control_card_script = script_directory / "control_card" / "C_scan.py"
+
+for _path in (digitizer_script, control_card_script):
+    if not _path.is_file():
+        raise FileNotFoundError(f"script not found: {_path}")
+
+
+def loadScanGeometry(path):
+    """Import C_scan.py for its constants only. Its hardware section is
+    behind a __main__ guard, so importing it does not touch the control card."""
+    spec = importlib.util.spec_from_file_location("C_scan_geometry", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+scan = loadScanGeometry(control_card_script)
+
+ROWS = scan.Y_POSITIONS                                   
+SHOTS_PER_ROW = scan.X_POSITIONS
+SAMPLE_RATE = scan.SAMPLE_RATE
+ROW_RECORD_SECONDS = scan.DAQ_ACQUIRE_SAMPLES / SAMPLE_RATE
+TOTAL_SECONDS = scan.ARRAY_LENGTH / SAMPLE_RATE
+
+print(f"rows / acquisitions:  {ROWS}")
+print(f"shots per row:        {SHOTS_PER_ROW}")
+print(f"row record:           {ROW_RECORD_SECONDS * 1e3:.1f} ms")
+print(f"whole scan:           {TOTAL_SECONDS:.1f} s")
+
+
+# ---- start the digitizer and wait until it is armed for row 1 ----------------
+digitizer_environment = dict(os.environ)
+digitizer_environment.update({
+    "SCAN_ROWS": str(ROWS),
+    "SCAN_SHOTS_PER_ROW": str(SHOTS_PER_ROW),
+    "SCAN_PULSE_RATE": repr(SAMPLE_RATE),
+    "SCAN_ROW_RECORD_SECONDS": repr(ROW_RECORD_SECONDS),
+    "SCAN_TOTAL_SECONDS": repr(TOTAL_SECONDS),
+})
+
+# ``-u`` makes its status messages available immediately, so the control card
+# does not start before the digitizer is armed.
+digitizer_process = subprocess.Popen(
+    [sys.executable, "-u", str(digitizer_script)],
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    text=True,
+    bufsize=1,
+    env=digitizer_environment,
+)
+assert digitizer_process.stdout is not None
+
+rows_armed = 0
+for line in digitizer_process.stdout:
+    print(line, end="", flush=True)
+
+    if ARMED_MARKER in line:
+        rows_armed += 1
+        break
+
+if rows_armed == 0:
+    return_code = digitizer_process.wait()
+    raise RuntimeError(
+        "Digitizer exited before acquisition became ready "
+        f"(exit code {return_code})."
+    )
+
+# Only now, with the board armed for row 1, may the waveform start.
+control_process = subprocess.Popen([sys.executable, str(control_card_script)])
+
+# Continue forwarding digitizer output, counting the arm of every later row.
+for line in digitizer_process.stdout:
+    print(line, end="", flush=True)
+
+    if ARMED_MARKER in line:
+        rows_armed += 1
+
+# Wait until both scripts finish and report failures accurately.
+digitizer_return_code = digitizer_process.wait()
+control_return_code = control_process.wait()
+
+if digitizer_return_code != 0 or control_return_code != 0:
+    raise RuntimeError(
+        "Acquisition failed: "
+        f"digitizer exit code={digitizer_return_code}, "
+        f"control-card exit code={control_return_code}."
+    )
+
+# one arm per row: fewer means the board missed the trigger edge of some rows
+if rows_armed != ROWS:
+    print(f"WARNING: digitizer armed {rows_armed} times for {ROWS} rows")
+
+print(f"Acquisition finished: {rows_armed} rows")

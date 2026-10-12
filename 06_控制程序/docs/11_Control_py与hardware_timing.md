@@ -2,6 +2,8 @@
 
 （10/3 在会话"B-scan"里读代码和讨论，10/4 晚整理成文。Control_py 在 `C:\Users\2031\Desktop\Control_py`，原版在 `C:\Users\CAO LAB\Desktop\Control_py`，只读、不进 GitHub。注释是英文，**是不是 Maria 写的、她现在用的是不是这一版，待问她**。）
 
+> 10/11 补：Maria 后来的版本（10/3、10/8）存在 `06_控制程序/参考_Maria_control_py/` 的日期文件夹里；10/8 版（A-line 用 NPT、B/C 用 TS）的参数、问题、数据检查和与我们 MATLAB 版的对照见 `参考_Maria_control_py/2026-10-08/README.md`。下文仍是 10/3 读的实验室电脑那一版。
+
 ## 导师的原话（10/3 Slack）
 > chat with Maria and ask what she is using. you will need to use the hardware timing
 
