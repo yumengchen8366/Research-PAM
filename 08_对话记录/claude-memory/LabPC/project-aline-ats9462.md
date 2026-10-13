@@ -1,21 +1,19 @@
 ---
 name: project-aline-ats9462
-description: A-line MATLAB scripts live in C:\Users\2031\Desktop\Matlab (outside the project folder); facts about the 2026-10-01 saved data
+description: A-line (ATS9462) module is DONE as of 2026-10-04 — summary in docs/10; code in PAM_controlProgram\Matlab; key measured facts and open items
 metadata:
   node_type: memory
   type: project
-  originSessionId: 39b3883d-0ddf-4134-ab62-dfce64583718
-  modified: 2026-10-03T23:24:00.935Z
+  originSessionId: feb01eef-b2c2-40e2-a447-45d5e4384744
+  modified: 2026-10-05T01:16:48.887Z
 ---
 
-A-line scripts: `C:\Users\2031\Desktop\Matlab\ats9462_aline_once.m` (1024 pts, saveData=true) and `ats9462_aline_test_revised.m` (512 pts, saveData=false, comments at lines 32–34/54 etc. don't match code). Data: `C:\Users\2031\Desktop\Matlab\aline_data\` — 6 files from 2026-10-01 were made with aline_once.m: 1024 pts / 5.689 µs, 180 MS/s, level code 150, 1 MHz continuous square wave; ±0.4 V and ±2 V runs clipped, ±4 V not. Edge phase repeated within each setting (trigger locked).
+A-line module (plan docs/07 week 1, 1.1–1.4) finished 2026-10-04, ahead of the 10/5–10/11 schedule. Full summary: `docs/10_A-line测试总结.md`; raw per-file settings in docs/09 parts 3–4. Code in `PAM_controlProgram\Matlab\` (Desktop\Matlab is a junction): `ats9462_aline_test_revised.m` (single record, TRIG IN, 180 MS/s, 1024 pts, cfg.note), `aline_edge_time.m`, `analyze_delay_1003.m`, `ats9462_multi_aline.m` (NPT 10×10, 4-buffer ring, keeps full buffers on timeout; `(N)` = offline sim). Analysis code / param table / multi script were written by Claude at the user's request.
 
-Advisor's W1 (10/5–10/11) A-line check: generator CH1 = trigger, CH2 = signal, synced with a fixed delay; ATS-measured delay must match the set delay; cross-check with oscilloscope. Advisor also asks about trigger level meaning, filter (BW limit), DMA settings.
+Measured facts: TRIG IN ≈50 Ω; threshold 0.8–0.9 V (ETR_5V, code 150 ≈ 0.87 V); delay step 2 µs → 1.9997 µs, jitter 1–2 ns, ATS ≈70 ns earlier than scope; trigger delay 180 samples shifts window 1.0018 µs; BW limit slows edge 17→24 ns, noise unchanged; multi-record 1000/1000 at 100 kHz; real laser NPL45C (ext trigger only, 0.2–2 V, ≤50 kHz) + photodiode PDA10A2 → TRIG IN works (blocked light → timeout). LabVIEW Main defaults: trigger source **Chan_B** (photodiode, level 144 ≈ 0.5 V), CH1 ±200 mV, 100 MS/s, Trig Delay 3.5 µs.
 
-2026-10-03 lab results (A-line 1.1–1.3 all passed; details in docs/09 tables): TRIG IN measured ≈50 Ω (not 1 MΩ as a web datasheet snippet said) → generator CH1 Imped = Load; level code 150 threshold confirmed between 0.6–1.2 V; delay step 2 µs measured 1.9997 µs, jitter 1–2 ns, ATS ≈70 ns earlier than scope (fixed offset); ±4 V range zero offset ≈ −2.9 mV. Instruments: RIGOL DG852 Pro (changing Imped rescales display, not output) and DS1054Z (1 MΩ only). revised.m now 1024 pts, saveData=true, has cfg.note.
+Open: CH B trigger mode untested; real transducer signal on CH A not yet; P0.6→50 Ω TRIG IN drive level and P0.7→laser (5 V vs ≤2 V spec) unverified; original P0.6/P0.7 wiring currently disconnected (ask Maria); "terminal 7" probably P0.7 (confirm with advisor). Next module: motor calibration, then timing, then B-scan (week 3).
 
-Full advisor meeting transcript and 4-week plan are in the Code-tab session "PAM导师会谈整理与四周计划" (readable with list_events).
+Advisor meeting transcript + 4-week plan: Code-tab session "PAM导师会谈整理与四周计划". MATLAB R2024b `-batch` works for read-only .mat checks on the lab PC.
 
-MATLAB R2024b is installed (`C:\Program Files\MATLAB\R2024b\bin\matlab.exe -batch` works for read-only .mat inspection). SDK guide: `C:\AlazarTech\ATS-SDK\23.3.0\ATS-SDK-Guide.pdf` (no PDF renderer on this PC).
-
-Related: [[user-pam-phd-student]]
+Related: [[user-pam-phd-student]], [[project-two-computers-sync]]
