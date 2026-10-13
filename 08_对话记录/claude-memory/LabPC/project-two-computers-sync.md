@@ -1,17 +1,21 @@
 ---
 name: project-two-computers-sync
-description: User works on two computers with the same Claude account; Code-tab sessions were copied to the second PC via a snapshot package on 2026-10-03
+description: "PAM project syncs across PCs AND Claude accounts via private GitHub repo yumengchen8366/PAM_research: sync_pam.cmd (+ _sidebar), junction layout; zip packages are fallback only"
 metadata:
   node_type: memory
   type: project
-  originSessionId: 624142b1-3204-4664-b7e7-e787919d6088
-  modified: 2026-10-03T22:33:35.277Z
+  originSessionId: ec41eebc-31a0-448d-b552-0778ae4432dd
+  modified: 2026-10-04T17:11:32.796Z
 ---
 
-User wants all PAM conversations visible on both computers (lab PC with NI Dev1 + ATS9462, and a second PC, same Claude account). Code-tab sessions are local-only: transcripts in `%USERPROFILE%\.claude\projects\<slug>\`, sidebar entries in `%APPDATA%\Claude\claude-code-sessions\<acct>\<org>\local_*.json`. On 2026-10-03 a snapshot `Desktop\PAM_sync_2026-10-03.zip` (project + Matlab + New folder + memory + all 7 sessions + restore.ps1 that rewrites paths if the user folder differs) was made; Control_py (22 GB) was left out. Remote Control was turned on for all 7 sessions the same evening. Remote Control is per-session: the app setting `connect_new_sessions_to_remote_control` was unset, so a session started later that night came up with Remote Control off (user asked why). Fixed 2026-10-03: setting turned On on the lab PC, so new sessions there auto-connect; the second PC has its own setting (待确认).
+Since 2026-10-04 the user works on PAM from several PCs and from a second, personal Claude account (not the researchcaolab one). Everything goes through the private GitHub repo `https://github.com/yumengchen8366/PAM_research.git` (commit identity yumengchen8366 / yumengchen8366@users.noreply.github.com).
 
-**Why:** later conversations do not sync automatically; whether the second PC's sidebar shows copied sessions was 待确认 at the time.
+Layout on the lab PC (CAOLAB1): repo root = `Desktop\PAM_controlProgram`; `Matlab`, `New folder`, `System_test_09_25` live inside it with Desktop junctions; `~\.claude\projects\<slug>\memory` is a junction to `claude\memory` (so memory edits are committed directly). Transcripts/uploads/sidebar entries are copied by `docs\tools\pam_sync.ps1` to `claude\transcripts|uploads|desktop-sessions`, stored with canonical lab paths and rewritten per PC. `sync_pam.cmd` = export, commit, fetch+merge, import, push; `sync_pam_sidebar.cmd` adds -ImportSidebar (app must be quit) to put sessions in the sidebar of whichever account is signed in. `docs/工作日志.md` and MEMORY.md use merge=union. Git is per-user at `%LOCALAPPDATA%\Programs\Git` (not on PATH in old shells). The project folder is owned by Windows user "CAO LAB", so git needed safe.directory.
 
-**How to apply:** if running on the second PC, paths may differ from `C:\Users\2031\...` and hardware (Dev1, ATS9462) is not present — don't run hardware scripts there. For live viewing from the other PC, Remote Control on a session is the alternative; re-package to carry newer sessions.
+**Why:** the user wants one shared state wherever they work; Claude conversations themselves are account-bound, so knowledge must live in docs + memory files.
+
+**How to apply:** remind the user to run sync_pam.cmd at the start and end of each window. Claude's own shell is non-interactive, so a push needing GitHub login must be run by the user. Pushing from Claude works only after credentials are cached. Unverified: whether the desktop sidebar shows imported sessions; whether new sessions in a git repo default to worktrees (would change memory path). Old zip scripts (make_sync_package.ps1/restore.ps1) remain as fallback for Control_py / ATS SDK which are not in GitHub. Hardware scripts only on the lab PC.
+
+Mac (added 2026-10-04, untested): `docs/tools/pam_sync_mac.py` via `sync_pam.command` (`--setup` once; memory = symlink). It never round-trips whole files: it stores per-file hash+length of both sides and appends only new lines (path-rewritten) to the repo copy, because Windows→Mac path rewriting is not exactly reversible. Code-tab sessions are local, not tied to the claude.ai account.
 
 Related: [[user-pam-phd-student]], [[project-aline-ats9462]]
