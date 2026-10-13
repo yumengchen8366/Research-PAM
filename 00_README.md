@@ -57,7 +57,7 @@ claude.ai 网页 Project 通过 GitHub 集成直接读本仓库（10/4 起，不
 
 ## 06_控制程序/ （原实验室电脑 `Desktop\PAM_controlProgram`，10/3 19:34 快照）
 - `CLAUDE.md`：MATLAB 重写项目的规则和文件位置
-- `docs/`：01 硬件与接线、02 LabVIEW 程序地图、03 写法对照、04/07 四周计划（07 有英文版）、05 参数字典、06 现有代码与进度、08 LabVIEW 清单、09 两天冲刺清单、**工作日志.md（跨账号进度接力棒）**
+- `docs/`：01 硬件与接线、02 LabVIEW 程序地图、03 写法对照、04/07 四周计划（07 有英文版）、05 参数字典、06 现有代码与进度、08 LabVIEW 清单、09 两天冲刺清单、10 A-line 测试总结、11 Control_py 对照、12 DMA buffer 与 dual-port、13 B-scan 记录、14 C-scan 测试流程、**工作日志.md（跨账号进度接力棒）**
 - `LabviewPAM/`：只在实验室电脑本地，不进 git
 - `参考_Maria_control_py/`：Maria 的 Python 版扫描+采集代码，按代码日期分文件夹存快照（`2026-10-03/`、`2026-10-08/`），参考用不改；根目录 `README.md` 是版本表和更新步骤，各版本 `README.md` 里有参数表、问题和要问 Maria 的
 

@@ -725,7 +725,7 @@ Laser/trigger 电磁串扰、接地/供电、放大器噪声或增益、BNC 连�
 
 ### 19.3 现在的位置和本周要做的（10/12 会后）
 > 按 Phase 1 计划，10/13 应在 W6；实际做到 W1、W3、W4 的电子学/时序部分（测试信号），**W2 真实 PA 信号没开始，是最大缺口** [Phase 1 对照文件第三部分]。
-- [ ] **dual-port 一边采一边存**（Rui 10/12 [导师要求]）：dual-port AutoDMA 其实一直在用（NPT AutoDMA 就是 dual-port，不需要另外打开 [文件确认，SDK 指南 §3.4.1]）。现在 `bscan_test.m:282–284` 是 NPT + 8 个 buffer 一次性 Post，正好装 400 条，结果 400/400。会上说的「约 3 s 卡住」是 `readwrite`（第 296 行）输出整段时序期间 MATLAB 被占住，不是报错（当时有没有报错，待用户确认）。要改的是 C-scan：每行存盘、buffer 轮流交回，内存不随扫描变大；改法见 docs/12 §三点五（参照 `ats9462_multi_aline.m` 的 4 buffer 轮换）
+- [ ] **dual-port 一边采一边存**（Rui 10/12 [导师要求]）：dual-port AutoDMA 其实一直在用（NPT AutoDMA 就是 dual-port，不需要另外打开 [文件确认，SDK 指南 §3.4.1]）。现在 `bscan_test.m:282–284` 是 NPT + 8 个 buffer 一次性 Post，正好装 400 条，结果 400/400。会上说的「约 3 s 卡住」是 `readwrite`（第 296 行）输出整段时序期间 MATLAB 被占住，不是报错（出处：10/12 PPT 写的 "MATLAB blocked ~2.3 s"，见 `08_对话记录/2026-10-05_导师汇报_PPT_大纲_b51e694e.md` 第 3040 行；正常运行没有报错记录）。要改的是 C-scan：每行存盘、buffer 轮流交回，内存不随扫描变大；改法见 docs/12 §三点五（参照 `ats9462_multi_aline.m` 的 4 buffer 轮换）
 - [ ] 查 DAQ 手册里 record 的定义（1 trigger = 1 record；RecordsPerBuffer 1–8191 [文件确认，ATS9462 规格书]）并能自己讲清 buffer 大小怎么定（Rui 10/12）
 - [ ] C-scan 代码（本周目标，测试信号版）
 - [ ] Y 轴：接线、拨码、µm/pulse、方向；Z 同理
@@ -744,7 +744,7 @@ Laser/trigger 电磁串扰、接地/供电、放大器噪声或增益、BNC 连�
 ### 20.1 想问 Rui
 
 **10/12 会后新增**
-- [ ] **采集方式**：10/12 他说「一直走按 trigger 采」和「走停采」只是间隔不同、先按他画的那种做——具体是哪一种？（转录里说不清）（10/12）（10/13 重读转录：基本已答。会谈整理第七节里，Rui 把「每个触发采一条」和 Maria 的「整段一直录，中间很多空数据」对比，说最常规的是前者，让按这个做；第九节里他确认现在的 B-scan 是一边动一边采，没要求改。也就是 `bscan_test.m` 的写法：匀速走、每 5 µm 一个触发、每个触发一条 record。转录里有【推测】段，当面确认一句即可）
+- [ ] **采集方式**：10/12 他说「一直走按 trigger 采」和「走停采」只是间隔不同、先按他画的那种做——具体是哪一种？（转录里说不清）（10/12）（10/13 重读转录：口头上 Rui 说一直走和走停「只是间隔不一样、两种都可以」，并把「每个触发采一条」和 Maria 的「整段一直录，中间很多空数据」对比，说最常规的是前者、让按这个做；第九节里他确认现在的 B-scan 是一边动一边采，没要求改。**但他的书面 Phase 1 计划写的是 "The initial scan is step-and-settle; continuous motion needs a separate validated pulse-to-position scheme"（`UVPAM_Phase1_Weekly_Integrated_MATLAB_EN.md` 第 30 行），07 计划对他承诺的也是移动–停–触发。** 两者不一致，仍待当面确认：第一版 C-scan 行内用匀速扫（`bscan_test.m` 现有写法），还是 step-and-settle）
 - [ ] **C-scan 的 buffer 设计**：一个 buffer = 一行 B-scan（RecordsPerBuffer = 每行 A-line 数），可以吗？（10/12 讨论后整理）
 - [ ] **Phase 1 对齐 ①–⑥**（时间线以哪个为准、先补 W2 还是继续 C-scan、像素预算、激光/PRF、容差、pilot 日期）：10/12 转录里没出现，下次会上问（见 Phase 1 对照文件第三部分）
 
