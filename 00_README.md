@@ -22,6 +22,8 @@ claude.ai 网页 Project 通过 GitHub 集成直接读本仓库（10/4 起，不
 
 **会谈记录/**（10/4 从 Downloads 复制）：`UV-PAM 导师会谈整理（定稿）.md`（9/28）、`PAM_advisor_meeting_complete_summary_2026-09-28.md`、`PAM导师会谈整理稿.docx`、`Rui Cao Jan 8th.txt`、`ruicao last.txt`（转录稿；录音不进仓库）；`2026-10-12_Rui会谈整理.md`（10/12 一对一：要点、待办、概念、ATS9462 核对、逐段对话）+ `2026-10-12_Rui会谈转录.txt`（原始转录）
 
+**PAM学习进度.md**（10/13 从 learning_skill 搬来）：学习/理解进度——每个知识点到哪、卡点、下一步练什么（learning-progress 技能的 PAM 记录）
+
 **参考（内容已进 master，留原件）**
 | 文件 | 内容 |
 |---|---|
