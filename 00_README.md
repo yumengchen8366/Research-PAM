@@ -20,7 +20,7 @@
 
 claude.ai 网页 Project 通过 GitHub 集成直接读本仓库（10/4 起，不再手动上传副本）。**本仓库是主；网页 Project 只读。** push 后在 Project 里点同步。
 
-**会谈记录/**（10/4 从 Downloads 复制）：`UV-PAM 导师会谈整理（定稿）.md`（9/28）、`PAM_advisor_meeting_complete_summary_2026-09-28.md`、`PAM导师会谈整理稿.docx`、`Rui Cao Jan 8th.txt`、`ruicao last.txt`（转录稿；录音不进仓库）
+**会谈记录/**（10/4 从 Downloads 复制）：`UV-PAM 导师会谈整理（定稿）.md`（9/28）、`PAM_advisor_meeting_complete_summary_2026-09-28.md`、`PAM导师会谈整理稿.docx`、`Rui Cao Jan 8th.txt`、`ruicao last.txt`（转录稿；录音不进仓库）；`2026-10-12_Rui会谈整理.md`（10/12 一对一：要点、待办、概念、ATS9462 核对、逐段对话）+ `2026-10-12_Rui会谈转录.txt`（原始转录）
 
 **参考（内容已进 master，留原件）**
 | 文件 | 内容 |
