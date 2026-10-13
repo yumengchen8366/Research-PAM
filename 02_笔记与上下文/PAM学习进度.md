@@ -1,6 +1,6 @@
 # PAM 学习与科研进度（learning-progress 记录）
 
-> 最近更新：2026-10-13（America/New_York）· 更新标识：2026-10-13-pam-move
+> 最近更新：2026-10-13（America/New_York）· 更新标识：2026-10-13-fact-fix
 > 2026-10-13 用户要求：所有和 PAM 相关的学习进度从 `yumengchen8366/learning_skill` 的 `progress/current.md` 搬到这里，之后 PAM 主题只在本文件更新；learning_skill 里只留指向本文件的链接（课程等非 PAM 主题仍在那边）。
 > 证据代号和写法沿用 learning-progress 技能：讲 = 助手讲解/用户阅读（不证明掌握）；述 = 用户自述懂；独 = 用户独立解释；迁 = 条件变化下预测正确；验 = 实际运行/实测核对。计划和实际执行分开写。
 > 和本仓库其他文件的关系：事实以 `06_控制程序/docs/`、工作日志、master 为准；本文件只记录「我理解到哪、卡在哪、下一步练什么」。
@@ -17,8 +17,8 @@
 |---|---|---|---|---|---|
 | K1 | `bscan_test.m` 6 段的执行顺序（参数 → 换算 → 时序 → 检查 → 运行 → 快速检查） | bscan_test.m §1–6 | 未知（本周未检验） | 10/13 计划建立 | 讲解后当天 |
 | K2 | 时序表：DO 各列（STEP/DIR/DAQ 触发/激光）、每 K 步一个触发、借 AI 时钟 ≤250 kS/s | bscan_test.m §4；docs/13 | 10/11 部分：行数计算（pScan）没内化（见 research-bscan-report Q4） | 10/13 计划建立 | 讲解后当天 |
-| K3 | 触发链：P0.6 → USER 1 → DG852 → G1 → TRIG IN（50 Ω，阈值约 0.87 V）/ G2 → CH A | docs/13 §1–3.3 | 10/11 部分：阈值余量因果答错后已讲（Q3） | 10/13 计划建立；10/12 Rui 要求知道阻抗在哪设、写进程序；10/13 已确认本行正确：bscan_test.m 第 262 行 ETR_5V = ETR_5V_50OHM（50 Ω），10/9 实测 50.2 Ω；助手先前按规格书说「固定 1 MΩ」是错的（见 research-rui-1012）；10/13 晚核对代码：TRIG IN 阻抗软件设不了（ETR_5V = ETR_5V_50OHM = 0），实测 50.2 Ω 仍成立，冲突在手册与实物之间 | — |
-| K4 | ATS NPT AutoDMA：Post → StartCapture → Wait → Abort；buffer 字节数；dual-port 板载内存在 readwrite 阻塞时接住数据 | ats9462_multi_aline.m；docs/12 | 10/11 自述不了解，已讲（Q6）；10/12 会上 record/buffer/ring buffer 说不清，已讲 | 10/13 计划建立；dual-port 代码核对进行中；10/12 Rui 要求 dual-port 一边采一边存；10/13 手册核对：dual-port AutoDMA 即推荐模式，buffer 处理完须重新 Post（推测为「约 3 s 卡住」原因，未核对代码） | — |
+| K3 | 触发链：P0.6 → USER 1 → DG852 → G1 → TRIG IN（50 Ω，阈值约 0.87 V）/ G2 → CH A | docs/13 §1–3.3 | 10/11 部分：阈值余量因果答错后已讲（Q3） | 10/13 计划建立；10/12 Rui 要求知道阻抗在哪设、写进程序；10/13 晚确认：本行「TRIG IN 50 Ω」正确，依据是实测 50.2 Ω；但 TRIG IN 的阻抗代码选不了（`AlazarSetExternalTrigger` 只有耦合和量程，ETR_5V = ETR_5V_50OHM = 0，无 1 MΩ 选项）；能在代码里选阻抗的是 CH A（bscan_test.m 第 260 行）。用户 10/13 晚自述同一结论：「CH A 可以设置阻抗，TRIG IN 不可以」（述）。规格书写 1 MΩ，与实物不符，原因待确认 | — |
+| K4 | ATS NPT AutoDMA：Post → StartCapture → Wait → Abort；buffer 字节数；dual-port 板载内存在 readwrite 阻塞时接住数据 | ats9462_multi_aline.m；docs/12 | 10/11 自述不了解，已讲（Q6）；10/12 会上 record/buffer/ring buffer 说不清，已讲 | 10/13 计划建立；dual-port 代码核对进行中；10/12 Rui 要求 dual-port 一边采一边存；10/13 核对代码和 SDK：NPT AutoDMA 就是 dual-port，一直在用，没有单独开关；bscan_test.m 8 个 buffer 一次性 Post，正好装 400 条，不需要重新 Post；「约 3 s 卡住」是 readwrite 期间 MATLAB 被占住，不是报错（当时有无报错待用户确认）；C-scan 要做成「Wait → 存 → 再 Post」的循环 | — |
 | K5 | Y 轴：接线（P0.2/P0.3 待核对）、拨码、µm/脉冲、方向、速度上限 | docs/01；test2.m | 未开始 | 10/13 计划建立；10/12 会上用户说本周检查 Y 方向 | — |
 | K6 | C-scan 结构：每行 arm → 输出一行时序 → 取数据 → X 回程 + Y 步进 → 检查停止；数据排成 时间 × X × Y | 待写 `cscan_test.m`；Maria C_scan.py 作对照 | 未开始 | 10/13 计划建立 | — |
 | K7 | C-scan 测试 ①–⑥ 和检查手段（ctr1 计数、nEdge/tEdge、四角位置、MAP、重读、中途停止、拔线超时） | 07 第 3 周；docs/13 §4 | 未开始 | 10/13 计划建立 | — |
@@ -33,8 +33,8 @@
 - 来源：用户 10/12 上传的会议转录（无说话人标记，语音识别错误多）；用户 10/12 校正：程序名为 MATLAB/LabVIEW、DO 时钟 248 kS/s、一条 A-line 1024 点、「外方向」= Y 方向、「Doppler」= dual-port（指 Maria 用 dual-port 做）、Jennifer 负责切片和 H&E 染色。
 - 完整整理稿（按原对话顺序，含待办与手册核对结果）：Research-PAM 仓库 `02_笔记与上下文/会谈记录/2026-10-12_Rui会谈整理.md`（原始转录 `2026-10-12_Rui会谈转录.txt`）；在线版 claude.ai 文档 https://claude.ai/code/artifact/c9b0725f-20da-4df0-9669-d8c70689acc5
 - 用户在会上汇报的结果（用户自述 + 此前实测，不是本次新测）：
-  - A-line 延迟：信号发生器设 1 µs 和 3 µs，测得差值约 1.97 µs（每个测 10–11 条）。
-  - B-scan：采到 400 条 A-line，叠图无明显延迟；4 mm/s、trigger 1000 Hz、1024 点 = 5.69 µs @ 180 MS/s；每 buffer 50 条 = 102400 字节；8 个 buffer 预先申请，运行约 3 s 卡住。
+  - A-line 延迟：信号发生器设 1 µs 和 3 µs，测得差值约 1.97 µs（每个测 10–11 条）。（10/13 更正：记录是 1.9997 µs（ATS）/ 1.990 µs（示波器），docs/10 第 33 行）
+  - B-scan：采到 400 条 A-line，叠图无明显延迟；4 mm/s、trigger 1000 Hz、1024 点 = 5.69 µs @ 180 MS/s；每 buffer 50 条 = 102400 字节；8 个 buffer 预先申请，运行约 3 s 卡住。（10/13 更正：代码是 800 Hz、间距 5 µm（bscan_test.m 第 23–24 行）；「卡住」不是报错，见 K4）
   - 电机：电流设置 0.3（单位待确认），最高 4.8 mm/s，设 5 mm/s 时几乎不转；未设加减速。
 - Rui 明确要求 [导师要求]：
   1. 知道采集卡阻抗在哪设，并在 MATLAB 程序里写成明确参数（现状不必改）。
@@ -42,24 +42,24 @@
   3. 电机：逐个试电流、加速、减速；先算一个 B-scan 实际需要多快，4.8 mm/s 不一定是问题。
   4. 采集：用 dual-port，一边采一边存（C-scan 可能采一小时，不可能全存在 DMA 里）；先自己理解 ring buffer 再试，不照搬 GPT。
   5. 查 DAQ 手册里 record 的定义：一个 trigger = 一个 record；records per buffer 上限约 8000。
-  6. 采集方式：「一直走按 trigger 采」与「走停采」只是间隔不同，先按他画的那种做（具体是哪种：待确认）。
+  6. 采集方式：「一直走按 trigger 采」与「走停采」只是间隔不同，先按他画的那种做（10/13 重读转录：基本已答。是「每个触发采一条」，也就是现在 bscan_test.m 的写法；当面确认一句）。
   7. 切片：成像和 H&E 染色是两回事（先拿一片成像，再交 Jennifer 染色）；先写 workflow 给他看；回复 Jennifer；找多余载玻片，找不到就买。
   8. 做实验前告诉他，他要来看（会上说明天或后天）。
 - 会上暴露的卡点（会后助手已讲解，用户尚未独立解释）：采样率 vs 带宽 vs 带宽限制；「10 ns」是 100 MS/s 的采样间隔而不是 A-line 长度；record / records per buffer / buffer 的定义与由谁决定；ring buffer 怎么实现；DO 时钟的用途；phase → 延时的换算说不清；切片 workflow 没想好。
 - 10/13 助手对照 ATS9462 手册核对 [文件确认；前提：卡是 ATS9462，型号待确认]：
-  - TRIG IN：规格书写 1.01 MΩ，但 SDK（AlazarDefs.m）有 ETR_5V_50OHM / ETR_1V_50OHM，程序 bscan_test.m 第 262 行用 ETR_5V（= ETR_5V_50OHM），10/9 实测 50.2 Ω → 实际是 50 Ω [实测 + 文件确认]。CH A 第 260 行 50 Ω；带宽限制第 261 行为 0（关）；第 282 行 NPT；第 284 行 8 个 buffer 一次性 Post。
+  - TRIG IN：规格书写 1.01 MΩ，实测 50.2 Ω（10/9）→ 实际是 50 Ω [实测]。TRIG IN 的阻抗代码选不了：`AlazarSetExternalTrigger` 只有耦合和量程，ETR_5V = ETR_5V_50OHM = 0，没有 1 MΩ 选项 [文件确认，SDK 指南 §6.85、AlazarDefs.m]。CH A 第 260 行 50 Ω，可改成 1 MΩ；带宽限制第 261 行为 0（关）；第 282 行 NPT；第 284 行 8 个 buffer 一次性 Post。
   - CH A/B 带宽 DC–65 MHz（±4 V 量程为 50 MHz）；带宽限制约 20 MHz，SDK 文档称默认关（AlazarSetBWLimit）。
   - RecordsPerBuffer 1–8191；「512」是 Traditional 模式下未传到电脑的 buffer 超过 512 时报 BUFFER_OVERFLOW，不是可申请上限；手册推荐成像用 NPT AutoDMA。
   - dual-port AutoDMA 即手册推荐模式：等 buffer 满 → 处理/存盘 → AlazarPostAsyncBuffer 交回 → 等下一个；建议 ≥ 3 个 buffer。
   - record 长度 ≥ 256 点且为 32 的倍数（1024 符合）。
-- 冲突已解决（10/13）：K3「TRIG IN 50 Ω」正确。依据：bscan_test.m 第 262 行 ETR_5V = ETR_5V_50OHM [文件确认]、10/9 万用表 50.2 Ω [实测]。原判断（助手按规格书 v1.5P：TRIG IN 固定 1.01 MΩ）→ 修正（SDK 可设 50 Ω，程序已设）。用户 10/13 的判断「阻抗由 SDK 代码设置」正确。
-- 条件计算：phase 324° 与 252° 若信号发生器为 100 kHz（周期 10 µs），对应 1 µs 与 3 µs，差 2 µs，与实测 1.97 µs 吻合 [条件计算，前提 频率 = 100 kHz，待确认]。
-- 待确认：处理完 buffer 后是否重新 Post（改法见 Research-PAM docs/12 §三点五）；卡住时的错误代码；信号发生器输出模式（50 Ω / High-Z）与延时测试频率；换能器中心频率与带宽；SR2 细分、额定电流、「0.3」单位、丝杠导程；「这一方向」是否为 Z；Jennifer 的切片厚度与交接方式；Rui 指定的是哪种采集方式。
+- 冲突已解决（10/13 晚再更正）：K3「TRIG IN 50 Ω」正确，依据是 10/9 万用表 50.2 Ω [实测]。「程序设了 ETR_5V_50OHM」不能当依据，因为 TRIG IN 阻抗代码选不了。CH A 的阻抗由 SDK 代码设置（第 260 行），TRIG IN 的不是。用户 10/13 晚自述的结论与此一致。规格书 1 MΩ 与实物不符的原因待确认。
+- phase 换算：延时测试时发生器两路都是 100 kHz（周期 10 µs）[文件确认，docs/09 第 117、120 行]，324° 与 252° 对应 1 µs 与 3 µs，差 2 µs，与实测 1.9997 µs（ATS）/ 1.990 µs（示波器）吻合。
+- 待确认：会上说的「约 3 s 卡住」当时有没有报错；换能器中心频率与带宽；SR2 细分、额定电流、「0.3」单位、丝杠导程；「这一方向」是否为 Z；Jennifer 的切片厚度与交接方式；采集方式（基本已答，当面确认一句）。（已解决、从这里移除：buffer 是否重新 Post——不需要；延时测试频率——100 kHz；发生器输出模式——Imped Load，docs/09 第 125、155 行）
 - 下一步（会上定的待办，尚未执行）：
   - 阻抗位置已由代码确认（bscan_test.m 第 260–262 行），不必进实验室再测；剩下的是自己看懂这三行，能说出每个参数的含义（完成标准：不看代码讲出 CH A、带宽限制、TRIG IN 各设成什么、在哪一行）。
   - 采集卡：写下采样率/带宽区别；查换能器带宽 → 定每条 A-line 点数。
   - 电机：查手册标称速度；逐个试电流/加减速；算 B-scan 所需速度；检查 Y 方向。
-  - 程序：查 record 定义与 records per buffer；先弄懂 AutoDMA 与 ring buffer；问 Maria 她的 dual-port 怎么设；改成一边采一边传，解决约 3 s 卡住；本周争取写完 C-scan 代码。
+  - 程序：查 record 定义与 records per buffer；先弄懂 AutoDMA 与 ring buffer；问 Maria 她的 dual-port 怎么设；C-scan 改成每行存盘、buffer 轮流交回（一边采一边存）；本周争取写完 C-scan 代码。
   - 切片：写 workflow 给 Rui；回复 Jennifer；问切片厚度；找载玻片或买。
   - 实验：定时间并提前告诉 Rui。
 - 证据状态：会议内容为转录整理；概念为助手讲解与手册核对，用户尚未做白纸回忆或独立解释。
@@ -108,3 +108,10 @@
 
 ## 2026-10-13 · 2026-10-13-pam-move
 - 用户要求把 PAM 相关进度搬到 Research-PAM。research-cscan-week、research-rui-1012、research-bscan-report 三节和对应历史条目移入本文件；learning_skill 只留链接。内容未改。
+
+## 2026-10-13 · 2026-10-13-fact-fix
+- research-rui-1012 / research-cscan-week K3、K4：事实更正（用户 10/13 晚同意；同时改了会谈整理稿和 master）。
+  - TRIG IN：原判断「程序设 ETR_5V_50OHM，所以 50 Ω；阻抗由 SDK 代码设置」→ 修正「50 Ω 对，依据是实测 50.2 Ω；TRIG IN 阻抗代码选不了，代码能选阻抗的是 CH A」→ 依据：SDK 指南 §6.85、AlazarDefs.m（ETR_5V = ETR_5V_50OHM = 0）、SDK 自带 ATS9462 示例。用户 10/13 晚自述同一结论（述）。
+  - 「约 3 s 卡住」：原判断「8 个 buffer 用完没交回」→ 修正「readwrite 期间 MATLAB 被占住，不是报错」→ 依据：bscan_test.m 第 281 行 recordsPerAcquisition = 400、第 296 行 readwrite。有无报错待用户确认。
+  - 会上汇报的数字：1.97 µs → 1.9997 µs（docs/10）；1000 Hz / 4 µm → 800 Hz / 5 µm（bscan_test.m）；phase 换算的频率 100 kHz 已确认（docs/09）。
+- 证据状态：以上是事实核对，不是学习检验；按用户 10/13 要求，学习方法暂停，没有安排回忆。
