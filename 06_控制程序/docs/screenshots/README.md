@@ -69,3 +69,4 @@
 | `MATLAB_1014_bscan_baseline.jpg` | 2.6 B-scan 基准：400/400、ctr1 400、包络图 | 已转写（13 §3.4） |
 | `SCOPE_1014_bscan_baseline_measure.jpg` | 同一次运行的示波器 Measure 表：P0.6 4.48 V、G1 2.00 V / 5 µs、G2 1.06 V / 200 ns、Dly 550 ns | 已转写（13 §3.4、§7 读数说明） |
 | `MATLAB_1014_3.1_check_mode.jpg` | 3.1 检查模式：10 条、0.50 mm、0.90 s | 已转写（14 记录） |
+| `MATLAB_1014_3.1_figures.jpg` | 3.1 硬件运行的两张图：B-scan plan + B-scan 包络（10 条） | 已转写（13 §8、14 记录） |

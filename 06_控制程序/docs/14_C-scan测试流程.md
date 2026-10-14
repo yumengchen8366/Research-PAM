@@ -433,3 +433,11 @@
 - `Y_UM_PER_PULSE = 0.5`（注释里「行程约 15 cm」作废）；
 - `Y_POSITIVE_DIR`：cscan_test 的定义是「行号增加时 DIR 的电平」。实测 DIR = 1 → Y 朝电机，所以行号朝电机增加就填 1，远离电机就填 0，由 C-scan 窗口定；
 - Y 速度 ≤ 4 mm/s 已验证。
+
+**3.1 短行** ✔（`bscan_test.m` 只改参数：第 22 行 SCAN_LENGTH_UM = 100、第 23 行 DX_UM = 10、第 24 行 TRIG_RATE_HZ = 400、第 51 行 recordsPerBuffer = 2；`MATLAB_1014_3.1_check_mode.jpg`、`MATLAB_1014_3.1_figures.jpg`；数据 `bscan_data\bscan_20261014_165406.mat`，只在 LabPC）：
+- 检查模式：10 条、10.00 µm、B-scan 长度 0.09 mm、4.00 mm/s、8000 Hz、400 Hz、248000 S/s、总行程 0.50 mm、0.90 s、结束 +0.0 µm。
+- 硬件：ctr1 = **10**、**10/10**、rail 0、每条 1 个沿、上升沿 1.9265–1.9317 µs（标准差 1.52 ns，峰峰 5.18 ns）、脉冲高 1.046–1.051 V。
+- → 「短行 + rpb = 2（5 个 4096 B 的 buffer）」能收齐，附 A 的 ATS 参数可用。两张图怎么读见 docs/13 §8。
+- 跑完 `bscan_test.m` 改回默认参数（2000 / 5 / 800 / 50，SAVE_DATA = false，RUN_HARDWARE = false），第 37 行保持 4。
+
+**今天计划的阶段 0、2（2.5 的「连走 9 次 Δy」除外）、3.1 全部完成。下一步交给 C-scan 窗口：填 cscan_test.m 第 51–53 行、Y_CALIBRATED = true，做 3.2（Ny = 1）。**
