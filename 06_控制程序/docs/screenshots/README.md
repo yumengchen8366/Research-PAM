@@ -44,3 +44,19 @@
 | `SCOPE_P06_DG852_chain_1007.jpg` | P0.6 → 发生器 G1（晚 580 ns，宽 5 µs）→ G2 测试脉冲（再晚约 2 µs），发生器接 1 MΩ 时 | 10/7 已拍，已转写（13） |
 | `HW_ATS9462_back.jpg` | ATS9462 背板：CH A、CH B、TRIG IN、AUX 各接了什么 | 待拍 |
 | `HW_laser_trigger.jpg` | 激光的外触发输入 | 待拍 |
+
+## 2026-10-14 照片（Pre-lab 会话 39c1b058，已缩到长边 1600 px）
+| 文件名 | 内容 | 状态 |
+|---|---|---|
+| `HW_DG852_rear_tee_on_10MHzREF_1014.jpg` | 发生器背面：三通插在 10MHz REF 上（错），CH2 AUX 空 | 已转写（13 §2、14 记录） |
+| `SCOPE_1014_before_D39ms.jpg` | 示波器被改过：D = 39 ms、触发 CH3、光标开着 | 已转写（14 记录） |
+| `SCOPE_1014_CH1_10MHz_from_REF.jpg` | REF 口送进来的 10 MHz 出现在 CH1（USER 1 线） | 已转写（14 记录） |
+| `HW_DG852_1014_before_channel.jpg`、`HW_DG852_1014_before_main.jpg` | 改之前：CH2 Sine、CH1 Polarity Negative | 已转写（14 记录） |
+| `HW_DG852_1014_after_channel.jpg` | 改之后：两路 Square，Polarity Positive，Sync/Trig Out Off，Load | 已转写（14 记录） |
+| `SCOPE_1014_static_shot_measure.jpg`、`SCOPE_1014_static_shot_wave.jpg` | 改正后静态打一发：P0.6 4.48 V，G1 2.00 V / 5 µs，G2 200 ns，Dly 550 ns | 已转写（14 记录） |
+| `HW_BNC2110_P02_P03_1014.jpg` | BNC-2110 端子排（P0.2/P0.3、USER 1） | 10/14 已拍 |
+| `HW_SR2_Y_label.jpg`、`HW_SR2_Y_terminals.jpg` | Y 驱动器 243106105 标签；信号和电机端子线色 | 已转写（01） |
+| `HW_SR2_Y_SW1-8.jpg`、`HW_SR2_Y_SW9-12.jpg` | Y 拨码：ON ON ON ON / ON OFF ON OFF；OFF ON OFF OFF | 已转写（01） |
+| `HW_KORAD_1014.jpg` | KORAD 23.88 V、0.112 A、C.V | 已转写（01） |
+| `HW_Y_static_check_1014_5V.jpg`、`HW_Y_static_check_1014_0V.jpg` | 2.2 静态电平：Y STEP− 5.08 V / 0.38 V | 已转写（01、14 记录） |
+| `HW_Y_stage_nameplate.jpg`、`HW_Z_tank_tray.jpg` | Y 滑台铭牌、Z 上的水槽托盘 | 待拍 |
