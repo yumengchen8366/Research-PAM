@@ -17,14 +17,14 @@
 %  以后如果行内改成 step-and-settle（docs/14 附 B），只换 buildRowTable 这一个函数，其余不变。
 %  运行前关闭 LabVIEW、Python 和其他占用 Dev1 / ATS9462 的程序；两轴先用手轮摇到行程中间（docs/14 0.4）。
 
-RUN_HARDWARE       = false;  % false：只算时序、检查、画图（和假数据），不碰任何硬件
+RUN_HARDWARE       = false; % false：只算时序、检查、画图（和假数据），不碰任何硬件
 LASER_ENABLE       = false;  % false：P0.7 一直是 0
 ATS_ENABLE         = true;   % false：只动电机 + ctr1 计数，ATS 不 arm（docs/14 4.1）
 COUNT_CHECK        = true;   % true：用 ctr1 数 P0.6 的上升沿（USER 1 端子并一根线到 PFI3）
 SAVE_DATA          = false;  % true：每行做完就写进 cscan_data 文件夹
 MOCK_DATA          = true;   % 只在 RUN_HARDWARE = false 时有用：用假数据走一遍数据通路（docs/14 1.4）
 PAUSE_BETWEEN_ROWS = false;  % true：每行开始前、扫完后各停一下，按回车继续（docs/14 4.1、6.2）
-Y_CALIBRATED       = false;  % Y 的 um/脉冲 和方向在 docs/14 阶段 2 实测之后才能改成 true
+Y_CALIBRATED       = true;  % Y 的 um/脉冲 和方向在 docs/14 阶段 2 实测之后才能改成 true
 
 %% 1. 扫描参数（docs/14 附 A：第一版 10 x 10）
 NX                  = 10;      % 每行 A-line 数 = X 方向像素数（必须是 recordsPerBuffer 的整数倍）
@@ -50,7 +50,7 @@ LASER_LINE     = "port0/line7";   % P0.7 → 激光（这次不接，必须一�
 X_UM_PER_PULSE = 0.5;             % X：4000 步/转、导程 2 mm（10/4 实测）
 Y_UM_PER_PULSE = 0.5;             % ⚠ 没标定：暂时沿用 X 的值。Y 行程约 15 cm，可能不是同一型号（docs/14 2.1、2.4）
 Y_POSITIVE_DIR = 1;               % Y 前进（行号增加）时 DIR 的电平。待确认（docs/14 2.3）
-Y_DRIVER_SN    = "待确认";         % Y 的 SR2 序列号（docs/01：243106105 或 243106317）
+Y_DRIVER_SN    = "243106105";         % Y 的 SR2 序列号（docs/01：243106105 或 243106317）
 MAX_SPEED_MM_S = 4;               % 带加速只验证过 4 mm/s；不加速 5 mm/s 会失步（docs/01）
 MAX_START_FREQ_HZ = 8000;         % 不加速直接起步的步频上限：X 实测 9.6 kHz 正常、10 kHz 失步（docs/01）。
                                   % 失步看的是步频不是 mm/s：Y 的 um/脉冲 如果比 X 小，同样的 mm/s 步频更高。⚠ Y 待 docs/14 2.5 实测
@@ -59,7 +59,7 @@ TRIG_WIDTH_S   = 10e-6;           % P0.6 脉宽
 CLOCK_AI       = "ai1";           % 给数字输出提供时钟的 AI 通道（只读）
 FS_MAX         = 250e3;           % AI 时钟上限
 EDGE_TH_V      = 0.5;             % 快速检查的阈值：测试脉冲 1 V 的一半（同 bscan_test）
-NOTE           = "测试信号（函数发生器），激光关";   % 每次测试前改成当前设定，存进文件
+NOTE           = "测试信号（函数发生器），激光关；docs/14 5.1 第一次 10x10";   % 每次测试前改成当前设定，存进文件
 OUT_DIR        = fullfile(pwd, 'cscan_data');     % 这个文件夹不进 git（.gitignore）：数据要自己拷到别的电脑
 
 % ATS9462：和 bscan_test 一样，只把 recordsPerBuffer 改成 2；阻抗和 TRIG IN 量程写成命名参数（Rui 10/12 要求）
@@ -778,7 +778,8 @@ function cscan = runCscan(plan, P, ATS, cscan, f)
     try
         for iy = 1:NY
             if P.PAUSE_BETWEEN_ROWS
-                input(sprintf('【暂停】第 %d 行开始前：看两个手轮，按回车继续（要停就点停止按钮，不要 Ctrl+C）', iy), 's');
+                             commandwindow;   % 把键盘焦点还给命令行，回车才不会按到停止按钮
+                             input(sprintf('【暂停】第 %d 行开始前：看两个手轮，按回车继续（要停就点停止按钮，不要 Ctrl+C）', iy), 's');
             end
             if isvalid(stopFig), stopFig.Name = sprintf('C-scan 第 %d/%d 行', iy, NY); end   % 窗口标题显示进度
             tRow = tic;              % 从第一次暂停之后开始计；6.10 计时的时候 PAUSE 要关
@@ -828,7 +829,8 @@ function cscan = runCscan(plan, P, ATS, cscan, f)
             end
             cscan.timing.save(iy) = toc(t);
             if P.PAUSE_BETWEEN_ROWS
-                input(sprintf('【暂停】第 %d 行扫完（回程前）：看两个手轮，按回车继续（要停就点停止按钮）', iy), 's');
+                                commandwindow;   % 同上
+            input(sprintf('【暂停】第 %d 行扫完（回程前）：看两个手轮，按回车继续（要停就点停止按钮）', iy), 's');
             end
 
             % ⑤ 看停止按钮（readwrite 期间按的，在这里的 drawnow 才会被处理）
