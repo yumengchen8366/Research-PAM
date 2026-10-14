@@ -29,7 +29,7 @@
 ## 硬件速查（详见 `docs/01_硬件与接线.md`）
 - NI PCIe-6323 = `Dev1`，经 BNC-2110（接在 Connector 0）引出。
 - AlazarTech ATS9462：CH A 接信号，TRIG IN 接外触发。SDK 在 `C:\AlazarTech\ATS-SDK\23.3.0`。
-- 数字输出位：P0.0 X STEP、P0.1 X DIR（已实测确认）；P0.6 采集触发（10/7 实测：不带负载 4.97 V，直接推 50 Ω 的 TRIG IN 时 2.84 V；测试时经 BNC-2110 USER 1 → 函数发生器外触发 → TRIG IN，见 `docs/13_B-scan记录.md`）；P0.2/3 Y、P0.4/5 Z、P0.7 激光触发（LabVIEW 前面板标注，实物待核对）。
+- 数字输出位：P0.0 X STEP、P0.1 X DIR（已实测确认）；P0.6 采集触发（10/7 实测：不带负载 4.97 V，直接推 50 Ω 的 TRIG IN 时 2.84 V；测试时经 BNC-2110 USER 1 → 函数发生器外触发 → TRIG IN，见 `docs/13_B-scan记录.md`）；P0.2/3 Y（STEP−/DIR−，10/13 用户看线确认，共阳极）、P0.4/5 Z、P0.7 激光触发（Z 和激光是 LabVIEW 前面板标注，实物待核对）。
 - 滑台 CXPF50-80100：行程 50 mm，导程 2 mm；SR2 每转 4000 步，**0.5 µm/脉冲**（10/4 实测）。`MOVE_UM > 0`（DIR = 1）= 朝电机走。不加速直接起步 ≤4 mm/s，5 mm/s 会失步。驱动器是共阳极接法（STEP−/DIR− 接 P0.x，STEP+/DIR+ 接 +5 V）。限位没接。
 - MATLAB 的定时数字输出要借 AI 时钟（≤250 kS/s）；LabVIEW 用板载时钟 500 kS/s。
 
