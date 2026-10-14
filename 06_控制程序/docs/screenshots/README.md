@@ -60,3 +60,12 @@
 | `HW_KORAD_1014.jpg` | KORAD 23.88 V、0.112 A、C.V | 已转写（01） |
 | `HW_Y_static_check_1014_5V.jpg`、`HW_Y_static_check_1014_0V.jpg` | 2.2 静态电平：Y STEP− 5.08 V / 0.38 V | 已转写（01、14 记录） |
 | `HW_Y_stage_nameplate.jpg`、`HW_Z_tank_tray.jpg` | Y 滑台铭牌、Z 上的水槽托盘 | 待拍 |
+
+## 2026-10-14 下午照片（会话 0dbc3483）
+| 文件名 | 内容 | 状态 |
+|---|---|---|
+| `HW_Y_coupling_tape_mark_1014.jpg` | Y 联轴器上的胶带记号（窗口边框当固定参照） | 已转写（14 记录） |
+| `HW_Y_ruler_0um_1014.jpg`、`HW_Y_ruler_plus10mm_1014.jpg`、`HW_Y_ruler_minus10mm_1014.jpg` | Y 在 0 / +10 mm / −10 mm 时的钢尺读数（约 4.3 / 3.3 / 5.3 cm） | 已转写（01、14 记录） |
+| `MATLAB_1014_bscan_baseline.jpg` | 2.6 B-scan 基准：400/400、ctr1 400、包络图 | 已转写（13 §3.4） |
+| `SCOPE_1014_bscan_baseline_measure.jpg` | 同一次运行的示波器 Measure 表：P0.6 4.48 V、G1 2.00 V / 5 µs、G2 1.06 V / 200 ns、Dly 550 ns | 已转写（13 §3.4、§7 读数说明） |
+| `MATLAB_1014_3.1_check_mode.jpg` | 3.1 检查模式：10 条、0.50 mm、0.90 s | 已转写（14 记录） |
