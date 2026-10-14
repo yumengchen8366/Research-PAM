@@ -40,4 +40,5 @@
 | 2026-10-08 | LabPC | B-scan 测试信号（第 2 周） | [2026-10-08_B-scan_测试信号（第_2_周）_aa42ff97.md](2026-10-08_B-scan_测试信号（第_2_周）_aa42ff97.md) |
 | 2026-10-08 | Mac | Research-PAM setup | [2026-10-08_Research-PAM_setup_36ae9f08.md](2026-10-08_Research-PAM_setup_36ae9f08.md) |
 | 2026-10-12 | Mac | Maria 代码对比 | [2026-10-12_Maria_代码对比_3f9ef6eb.md](2026-10-12_Maria_代码对比_3f9ef6eb.md) |
+| 2026-10-14 | LabPC | Pre-lab briefing + guidance: Y axis and B-scan | [2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_0dbc3483.md](2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_0dbc3483.md) |
 | 2026-10-14 | LabPC | Pre-lab briefing + guidance: Y axis and B-scan | [2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_39c1b058.md](2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_39c1b058.md) |
