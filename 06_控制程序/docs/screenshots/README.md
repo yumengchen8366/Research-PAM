@@ -70,3 +70,13 @@
 | `SCOPE_1014_bscan_baseline_measure.jpg` | 同一次运行的示波器 Measure 表：P0.6 4.48 V、G1 2.00 V / 5 µs、G2 1.06 V / 200 ns、Dly 550 ns | 已转写（13 §3.4、§7 读数说明） |
 | `MATLAB_1014_3.1_check_mode.jpg` | 3.1 检查模式：10 条、0.50 mm、0.90 s | 已转写（14 记录） |
 | `MATLAB_1014_3.1_figures.jpg` | 3.1 硬件运行的两张图：B-scan plan + B-scan 包络（10 条） | 已转写（13 §8、14 记录） |
+
+## 2026-10-14 晚照片和截图（会话 dd5e50b6，C-scan 上硬件）
+| 文件名 | 内容 | 状态 |
+|---|---|---|
+| `HW_DG852_1014_evening_cscan.jpg` | 开工复核：发生器两路设置（CH1 100 kHz 2 Vpp / 1 V，CH2 2.5 MHz 1 Vpp / 0.5 V / Delay 2 µs，Sync OFF，Load） | 已转写（14 记录） |
+| `SCOPE_1014_evening_cscan_check.jpg` | 开工复核：示波器 Measure 表（CH1 4.48 V、CH2 2.00 V / 5.000 µs、CH3 1.06 V / 200 ns、Dly 550 ns） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_3.2_figures.png` | 3.2（NY 1）：计划图 + MAP / 上升沿曲线（1.040–1.044 V、1.927–1.932 µs） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_4.2_figures.png` | 4.2（10 × 2，ATS 每行 arm）：MAP 1.040–1.046 V、上升沿图 | 已转写（14 记录） |
+| `MATLAB_1014_cscan_5.1_check_mode_mock.png` | 5.1 检查模式的假数据 MAP：从第 1 行到第 10 行由暗到亮（行顺序对） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_5.1_figures.png` | 5.1 第一次 10 × 10：MAP 1.042–1.047 V 均匀、上升沿 1.927–1.932 µs 随机分布 | 已转写（14 记录） |
