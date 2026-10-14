@@ -44,3 +44,39 @@
 | `SCOPE_P06_DG852_chain_1007.jpg` | P0.6 → 发生器 G1（晚 580 ns，宽 5 µs）→ G2 测试脉冲（再晚约 2 µs），发生器接 1 MΩ 时 | 10/7 已拍，已转写（13） |
 | `HW_ATS9462_back.jpg` | ATS9462 背板：CH A、CH B、TRIG IN、AUX 各接了什么 | 待拍 |
 | `HW_laser_trigger.jpg` | 激光的外触发输入 | 待拍 |
+
+## 2026-10-14 照片（Pre-lab 会话 39c1b058，已缩到长边 1600 px）
+| 文件名 | 内容 | 状态 |
+|---|---|---|
+| `HW_DG852_rear_tee_on_10MHzREF_1014.jpg` | 发生器背面：三通插在 10MHz REF 上（错），CH2 AUX 空 | 已转写（13 §2、14 记录） |
+| `SCOPE_1014_before_D39ms.jpg` | 示波器被改过：D = 39 ms、触发 CH3、光标开着 | 已转写（14 记录） |
+| `SCOPE_1014_CH1_10MHz_from_REF.jpg` | REF 口送进来的 10 MHz 出现在 CH1（USER 1 线） | 已转写（14 记录） |
+| `HW_DG852_1014_before_channel.jpg`、`HW_DG852_1014_before_main.jpg` | 改之前：CH2 Sine、CH1 Polarity Negative | 已转写（14 记录） |
+| `HW_DG852_1014_after_channel.jpg` | 改之后：两路 Square，Polarity Positive，Sync/Trig Out Off，Load | 已转写（14 记录） |
+| `SCOPE_1014_static_shot_measure.jpg`、`SCOPE_1014_static_shot_wave.jpg` | 改正后静态打一发：P0.6 4.48 V，G1 2.00 V / 5 µs，G2 200 ns，Dly 550 ns | 已转写（14 记录） |
+| `HW_BNC2110_P02_P03_1014.jpg` | BNC-2110 端子排（P0.2/P0.3、USER 1） | 10/14 已拍 |
+| `HW_SR2_Y_label.jpg`、`HW_SR2_Y_terminals.jpg` | Y 驱动器 243106105 标签；信号和电机端子线色 | 已转写（01） |
+| `HW_SR2_Y_SW1-8.jpg`、`HW_SR2_Y_SW9-12.jpg` | Y 拨码：ON ON ON ON / ON OFF ON OFF；OFF ON OFF OFF | 已转写（01） |
+| `HW_KORAD_1014.jpg` | KORAD 23.88 V、0.112 A、C.V | 已转写（01） |
+| `HW_Y_static_check_1014_5V.jpg`、`HW_Y_static_check_1014_0V.jpg` | 2.2 静态电平：Y STEP− 5.08 V / 0.38 V | 已转写（01、14 记录） |
+| `HW_Y_stage_nameplate.jpg`、`HW_Z_tank_tray.jpg` | Y 滑台铭牌、Z 上的水槽托盘 | 待拍 |
+
+## 2026-10-14 下午照片（会话 0dbc3483）
+| 文件名 | 内容 | 状态 |
+|---|---|---|
+| `HW_Y_coupling_tape_mark_1014.jpg` | Y 联轴器上的胶带记号（窗口边框当固定参照） | 已转写（14 记录） |
+| `HW_Y_ruler_0um_1014.jpg`、`HW_Y_ruler_plus10mm_1014.jpg`、`HW_Y_ruler_minus10mm_1014.jpg` | Y 在 0 / +10 mm / −10 mm 时的钢尺读数（约 4.3 / 3.3 / 5.3 cm） | 已转写（01、14 记录） |
+| `MATLAB_1014_bscan_baseline.jpg` | 2.6 B-scan 基准：400/400、ctr1 400、包络图 | 已转写（13 §3.4） |
+| `SCOPE_1014_bscan_baseline_measure.jpg` | 同一次运行的示波器 Measure 表：P0.6 4.48 V、G1 2.00 V / 5 µs、G2 1.06 V / 200 ns、Dly 550 ns | 已转写（13 §3.4、§7 读数说明） |
+| `MATLAB_1014_3.1_check_mode.jpg` | 3.1 检查模式：10 条、0.50 mm、0.90 s | 已转写（14 记录） |
+| `MATLAB_1014_3.1_figures.jpg` | 3.1 硬件运行的两张图：B-scan plan + B-scan 包络（10 条） | 已转写（13 §8、14 记录） |
+
+## 2026-10-14 晚照片和截图（会话 dd5e50b6，C-scan 上硬件）
+| 文件名 | 内容 | 状态 |
+|---|---|---|
+| `HW_DG852_1014_evening_cscan.jpg` | 开工复核：发生器两路设置（CH1 100 kHz 2 Vpp / 1 V，CH2 2.5 MHz 1 Vpp / 0.5 V / Delay 2 µs，Sync OFF，Load） | 已转写（14 记录） |
+| `SCOPE_1014_evening_cscan_check.jpg` | 开工复核：示波器 Measure 表（CH1 4.48 V、CH2 2.00 V / 5.000 µs、CH3 1.06 V / 200 ns、Dly 550 ns） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_3.2_figures.png` | 3.2（NY 1）：计划图 + MAP / 上升沿曲线（1.040–1.044 V、1.927–1.932 µs） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_4.2_figures.png` | 4.2（10 × 2，ATS 每行 arm）：MAP 1.040–1.046 V、上升沿图 | 已转写（14 记录） |
+| `MATLAB_1014_cscan_5.1_check_mode_mock.png` | 5.1 检查模式的假数据 MAP：从第 1 行到第 10 行由暗到亮（行顺序对） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_5.1_figures.png` | 5.1 第一次 10 × 10：MAP 1.042–1.047 V 均匀、上升沿 1.927–1.932 µs 随机分布 | 已转写（14 记录） |
