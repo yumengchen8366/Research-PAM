@@ -80,3 +80,14 @@
 | `MATLAB_1014_cscan_4.2_figures.png` | 4.2（10 × 2，ATS 每行 arm）：MAP 1.040–1.046 V、上升沿图 | 已转写（14 记录） |
 | `MATLAB_1014_cscan_5.1_check_mode_mock.png` | 5.1 检查模式的假数据 MAP：从第 1 行到第 10 行由暗到亮（行顺序对） | 已转写（14 记录） |
 | `MATLAB_1014_cscan_5.1_figures.png` | 5.1 第一次 10 × 10：MAP 1.042–1.047 V 均匀、上升沿 1.927–1.932 µs 随机分布 | 已转写（14 记录） |
+
+## 2026-10-14 晚第二段（会话 dd5e50b6，C-scan 阶段 6）
+| 文件名 | 内容 | 状态 |
+|---|---|---|
+| `MATLAB_1014_cscan_6.4_replot.png` | 6.4 `cscan_replot` 重读 5.1：三个 isequal 都是 1 | 已转写（14 记录） |
+| `MATLAB_1014_cscan_6.5_row3_dark.png` | 6.5 第 3 行关 CH2：MAP 上 Y = 20 µm 一条横的暗线 | 已转写（14 记录） |
+| `MATLAB_1014_cscan_6.6_stop_row2.png` | 6.6 停止按钮：停在第 2 行（10 × 2 MAP） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_6.2_2mm.png` | 6.2 Δ 200 µm：2 mm × 2 mm MAP、计划图 | 已转写（14 记录） |
+| `HW_Y_ruler_6.2_a_1014.jpg`、`HW_Y_ruler_6.2_b_1014.jpg` | 6.2 的 Y 钢尺照片（两张尺子摆法不同，读数以用户目读 4.3 → 约 4.1 cm 为准） | 已转写（14 记录） |
+| `MATLAB_1014_cscan_6.9_20x5.png` | 6.9 换参数 20 × 5 | 已转写（14 记录） |
+| `MATLAB_1014_cscan_6.10_NX10.png`、`_NX50.png`、`_NX200_MAP.png` | 6.10 计时的三组运行 | 已转写（14 记录） |
