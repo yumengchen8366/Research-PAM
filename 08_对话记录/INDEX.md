@@ -46,3 +46,4 @@
 | 2026-10-14 | LabPC | Pre-lab briefing + guidance: Y axis and B-scan | [2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_0dbc3483.md](2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_0dbc3483.md) |
 | 2026-10-14 | LabPC | Pre-lab briefing + guidance: Y axis and B-scan | [2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_39c1b058.md](2026-10-14_Pre-lab_briefing_+_guidance_Y_axis_and_B_39c1b058.md) |
 | 2026-10-14 | Mac | GitHub 连接检查 | [2026-10-14_GitHub_连接检查_11990984.md](2026-10-14_GitHub_连接检查_11990984.md) |
+| 2026-10-15 | LabPC | PAM 文件环境位置 | [2026-10-15_PAM_文件环境位置_a1758bf5.md](2026-10-15_PAM_文件环境位置_a1758bf5.md) |
