@@ -1,6 +1,6 @@
 # UV-PAM 项目主记录（master）
 
-> **最近更新**：2026-10-13 晚 · v1.2（更正 §19.2 TRIG IN 一条的依据和 G1 设置、§19.3「约 3 s 卡住」、§20.1 trigger 频率与采集方式、§20.2 TRIG IN；依据 bscan_test.m、docs/09、docs/13 §2、SDK 指南 §6.85 与 SDK 示例）。之前：2026-10-13 · v1.1（会后更新 §19、§20：补 9/24–10/12 的进度和 10/12 会谈；依据工作日志、docs/10、docs/13、`UVPAM_Phase1_Weekly_中英对照与解释.md`、`会谈记录/2026-10-12_Rui会谈整理.md`）。之前：2026-09-23 · v1.0（首次合并）
+> **最近更新**：2026-10-15 · v1.3（§20.1 加 10/15 会后新增 3 问，采集方式一条补 10/15 Rui 的说法；依据 `会谈记录/2026-10-15_Rui来看演示_要点.md`、`06_控制程序/docs/19_100kHz触发设计.md`）。之前：2026-10-13 晚 · v1.2（更正 §19.2 TRIG IN 一条的依据和 G1 设置、§19.3「约 3 s 卡住」、§20.1 trigger 频率与采集方式、§20.2 TRIG IN；依据 bscan_test.m、docs/09、docs/13 §2、SDK 指南 §6.85 与 SDK 示例）。之前：2026-10-13 · v1.1（会后更新 §19、§20：补 9/24–10/12 的进度和 10/12 会谈；依据工作日志、docs/10、docs/13、`UVPAM_Phase1_Weekly_中英对照与解释.md`、`会谈记录/2026-10-12_Rui会谈整理.md`）。之前：2026-09-23 · v1.0（首次合并）
 > **这是唯一主文件。** 会后只改 §19「当前进度」和 §20「待确认 / 问 Rui」；冲突有结论先写进 `claude/context-conflicts.md`，再同步到这里；每次改动更新本行日期。
 > **来源**（GPT 与 Claude 的内容都保留，只删重复；来源用 ⟨C⟩ = Claude 8/30 版、⟨G⟩ = ChatGPT 9/21 + 9/23 三份、⟨N⟩ = Drive 交接笔记 v0.9 8/07 版 标出）：
 > ① `UV-PAM-context.md`（⟨C⟩）② `PAM_project_context_for_new_chat.md`（⟨G⟩ 9/21）③ `PAM_Project_Handoff_2026-09-23.md`（⟨G⟩）④ `PAM_Current_Setup_Meeting_Prep_2026-09-23.md`（⟨G⟩，可复用部分；全文另存 `claude/meeting-prep/2026-09-28.md`）⑤ `PAM_New_Chat_Context_2026-09-23.txt`（⟨G⟩）⑥ Drive `PAM_LabVIEW_交接笔记.md` v0.9（⟨N⟩，9/23 重读核对）
@@ -744,9 +744,14 @@ Laser/trigger 电磁串扰、接地/供电、放大器噪声或增益、BNC 连�
 ### 20.1 想问 Rui
 
 **10/12 会后新增**
-- [ ] **采集方式**：10/12 他说「一直走按 trigger 采」和「走停采」只是间隔不同、先按他画的那种做——具体是哪一种？（转录里说不清）（10/12）（10/13 重读转录：口头上 Rui 说一直走和走停「只是间隔不一样、两种都可以」，并把「每个触发采一条」和 Maria 的「整段一直录，中间很多空数据」对比，说最常规的是前者、让按这个做；第九节里他确认现在的 B-scan 是一边动一边采，没要求改。**但他的书面 Phase 1 计划写的是 "The initial scan is step-and-settle; continuous motion needs a separate validated pulse-to-position scheme"（`UVPAM_Phase1_Weekly_Integrated_MATLAB_EN.md` 第 30 行），07 计划对他承诺的也是移动–停–触发。** 两者不一致，仍待当面确认：第一版 C-scan 行内用匀速扫（`bscan_test.m` 现有写法），还是 step-and-settle）
+- [ ] **采集方式**：10/12 他说「一直走按 trigger 采」和「走停采」只是间隔不同、先按他画的那种做——具体是哪一种？（转录里说不清）（10/12）（10/13 重读转录：口头上 Rui 说一直走和走停「只是间隔不一样、两种都可以」，并把「每个触发采一条」和 Maria 的「整段一直录，中间很多空数据」对比，说最常规的是前者、让按这个做；第九节里他确认现在的 B-scan 是一边动一边采，没要求改。**但他的书面 Phase 1 计划写的是 "The initial scan is step-and-settle; continuous motion needs a separate validated pulse-to-position scheme"（`UVPAM_Phase1_Weekly_Integrated_MATLAB_EN.md` 第 30 行），07 计划对他承诺的也是移动–停–触发。** 两者不一致，仍待当面确认：第一版 C-scan 行内用匀速扫（`bscan_test.m` 现有写法），还是 step-and-settle）（**10/15 Rui（用户转述）：两种是一样的，画时序图只是 t 的长短不同。** 处理：代码写成同一张通用表，「每个像素停多久」做参数，0 = 匀速扫；见 docs/19 §4）
 - [ ] **C-scan 的 buffer 设计**：一个 buffer = 一行 B-scan（RecordsPerBuffer = 每行 A-line 数），可以吗？（10/12 讨论后整理）
 - [ ] **Phase 1 对齐 ①–⑥**（时间线以哪个为准、先补 W2 还是继续 C-scan、像素预算、激光/PRF、容差、pilot 日期）：10/12 转录里没出现，下次会上问（见 Phase 1 对照文件第三部分）
+
+**10/15 会后新增**（背景：Rui 要求代码能在 100 kHz 下运行；中英两版和计算见 `06_控制程序/docs/19_100kHz触发设计.md` §9。回答由用户问到后填在每条后面）
+- [ ] **激光和频率**：台上 NPL45C 手册最高 50 kHz，100 kHz 是指以后的 UV 激光吗？现在用 NPL45C 做真实信号时设多少？——回答：（待填）
+- [ ] **每个像素平均几发**：100 kHz、4 mm/s、像素 5 µm 时每个像素 125 发；3 × 3 mm 全部保留约 92 GB，平均后约 0.7 GB [条件计算]。打算小扫描全部保留、大扫描边采边平均；平均几发合适，或者有没有目标信噪比 / 像素大小？——回答：（待填）
+- [ ] **停稳时间**：「每个像素停多久」做成参数、默认 0；以后用 step-and-settle 时停稳时间要实测，现在先不测可以吗？——回答：（待填）
 
 **9/23 的问题（10/13 标了状态）**
 - [ ] **验收标准**：复现完成 = 三轴 + galvo 能动，还是要出一张和论文可比的图？（工作量差好几倍）
