@@ -1,9 +1,9 @@
 ---
 session: 2bcf822a-6362-494d-8831-031585b2f5d4
 title: GitHub Research-PAM 进程
-machine: Mac新账号
+machine: Mac
 source: 2bcf822a-6362-494d-8831-031585b2f5d4.jsonl
-exported: 2026-10-15 00:34
+exported: 2026-10-15 00:47
 ---
 
 # GitHub Research-PAM 进程
@@ -636,3 +636,605 @@ options:
 ### 🤖 Claude · 2026-10-15 04:34
 
 > 🔧 Bash · description: Export this session's chat and show git status
+
+### ⚙️ 工具 · 2026-10-15 04:34
+
+<details><summary>工具输出</summary>
+
+```
+| 2026-10-01 | Mac(旧账号) | (无标题) | [2026-10-01_无标题_d6499ffd.md](2026-10-01_无标题_d6499ffd.md) |
+| 2026-10-01 | Mac(旧账号) | ATS9462 A-line 采集代码解析 | [2026-10-01_ATS9462_A-line_采集代码解析_0a5af2e7.md](2026-10-01_ATS9462_A-line_采集代码解析_0a5af2e7.md) |
+--- 导出 ---
+导出 2026-10-13_GitHub_Research-PAM_进程_2bcf822a.md
+共导出 1 个会话 → /Users/chenyumeng/Research-PAM/08_对话记录
+--- status ---
+ M 06_控制程序/docs/工作日志.md
+ M 08_对话记录/2026-10-13_GitHub_Research-PAM_进程_2bcf822a.md
+ M 08_对话记录/INDEX.md
+?? 02_笔记与上下文/meeting-prep/2026-10-16_会前准备.md
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:34
+
+> 🔧 Bash · description: Commit the meeting prep, work log entry and chat export
+
+### ⚙️ 工具 · 2026-10-15 04:34
+
+<details><summary>工具输出</summary>
+
+```
+d117ec9 2026-10-15 会前准备: 10/16 与 Rui 会谈（新变化表、10/12 布置逐条状态、时间预算、Q1–Q6 中英）
+## main...origin/main [ahead 1]
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:34
+
+会前准备写好并已提交（`d117ec9`，还没 push）：[2026-10-16_会前准备.md](02_笔记与上下文/meeting-prep/2026-10-16_会前准备.md)。先双击 `sync_pam.command` 推上去。
+
+## 进程现状（10/13–10/14，GitHub 最新）
+
+- **10/14 一天做完**：Y 轴标定 0.5 µm/脉冲 [实测]；B-scan 复测 400/400；`cscan_test.m` 写完并上硬件，10 × 10 和 2 × 2 mm 都 100/100；行顺序、停止、拔线、换参数、计时全测过。**测试信号版 C-scan 已闭环。**
+- **dual-port 查清**：现用的 NPT AutoDMA 就是 dual-port（SDK §3.4.1），不用另开；ring buffer 决定不做。
+- **没做的**：放大器 + 换能器 + 激光链路一次没测，CH A 一直是发生器假信号；电机电流和加速段没试；切片 workflow、Jennifer 回复 [待确认]。
+- 仓库里**没有 10/15 的记录**。Rui 10/15 有没有来看、Jennifer 回没回，文件按"没有"写，不对的会前划掉。
+
+## 明天会谈的核心（文件 §5，前三个一定问）
+
+1. **Q1 采集方式**：行内匀速扫还是 step-and-settle。他 10/12 口头说两种都行，书面计划写的是 step-and-settle。
+2. **Q2 下一步顺序 + 激光接法**：放大器背景 → 激光触发 → 胶带 A-line。P0.7 是 5 V TTL，NPL45C 手册写 0.2–2 V，原来怎么接的要问他；开激光他要在场。
+3. **Q3 切片**：Jennifer 十月底退休，只剩两周，pilot 要不要提前，谁切、谁脱蜡、载玻片有没有。
+4. **Q4 时间预算** [条件计算]：3 × 3 mm @ 1 µm 是 900 万像素（他原文写约一百万），按现流程约 2.1 h。瓶颈是每行 0.52 s 开销和单向扫描，不是 4.8 mm/s。
+5. **Q5 容差**：从没定过值，现在临时用 ±28 µm。
+
+文件里还有：10/12 他布置的 15 条逐条状态（✅ 7、🟡 4、⬜ 2、❓ 2）、他要的"采样率 vs 带宽"书面版、record/buffer 一段、一分钟开场中英版、可能追问的一句话答。
+
+## 会前要你补的三件事
+
+- 10/15 Rui 来看过没有、Jennifer 回了没有、workflow 写没写，告诉我或自己改 §1 和 §2。
+- 换能器和放大器型号：10/12 他要的"查换能器带宽定 A-line 点数"现在是 ⬜，能在实验室看一眼铭牌就能补上。
+- `bscan_test.m:15` 10/14 收工时是 `RUN_HARDWARE = true`，没提交，到实验室先改回 false。
+
+### 🧑 用户 · 2026-10-15 04:36
+
+不是，指导我使用一下 bscan 代码，在没有人工智能你们这些软件的帮助下，我需要会怎么调节这些参数，还有怎么算各个东西的频率等等等等，还有 cscan 怎么可以给它演示一下，我还要怎么算，怎么怎么怎么运行？ 如果有新的东西，怎么更改？
+
+### 🤖 Claude · 2026-10-15 04:36
+
+明白，这次不是会前材料，是教你自己会用这两个脚本。我先读代码本身（`bscan_test.m`、`cscan_test.m`）和 docs/15 讲义，然后按"参数是什么 → 在哪 → 怎么算 → 改了会怎样 → 怎么检查"写一份你能脱离 AI 用的操作手册，并附练习题让你自己算。
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read the parameter and timing-table section of bscan_test.m
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read the hardware, acquisition and check section of bscan_test.m
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read docs/15 sections 2 to 5 on frequencies, B-scan and C-scan
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+=== bscan_test.m 150-330 ===
+if ~RUN_HARDWARE
+    fprintf('\n*** 检查模式：没有向硬件发送任何信号。确认无误后把 RUN_HARDWARE 改成 true ***\n');
+    return
+end
+
+clear d dq cnt
+daqreset
+
+if COUNT_CHECK
+    cnt = daq("ni");
+    addinput(cnt, "Dev1", "ctr1", "EdgeCount");   % 计数输入在 PFI3 (P1.3)
+    resetcounters(cnt);
+    c0 = read(cnt, "OutputFormat", "Matrix");
+end
+
+doLines = [STEP_LINE DIR_LINE DAQTRIG_LINE LASER_LINE];
+raw = runBscan(do, fs, doLines, CLOCK_AI, Nx, ATS);
+
+if COUNT_CHECK
+    c1 = read(cnt, "OutputFormat", "Matrix");
+    nTrigCount = c1 - c0;
+    fprintf('ctr1 实测 P0.6 上升沿：%d（应为 %d）\n', nTrigCount, Nx);
+  
+…[截断，共 6206 字符]
+```
+</details>
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+327 bscan_test.m
+    1036 cscan_test.m
+     132 cscan_replot.m
+     105 test2.m
+     130 test2_y.m
+    1730 total
+=== bscan_test.m 1-130 ===
+%% B-scan：X 滑台匀速扫描 + 激光触发 + ATS9462 每个触发采一条 A-line
+%
+%  原理（全部由 Dev1 同一个硬件时钟产生，严格同步）：
+%    P0.0 X STEP   ：加速 → 匀速 → 减速（→ 可选自动返回起点）
+%    P0.1 X DIR    ：扫描方向，返回时翻转
+%    P0.6 DAQ 触发 ：匀速段内每走 K 个脉冲（= DX_UM）发一次 → ATS9462 TRIG IN 采一条 A-line
+%    P0.7 激光触发 ：与 DAQ 触发同一时刻（LASER_ENABLE = false 时不发）
+%  因为触发是按"走了多少步"来发的，每条 A-line 的位置都正好间隔 DX_UM，不会出现 6.25 这类非整数关系。
+%
+%  先用 RUN_HARDWARE = false 检查时序和位置图；
+%  再用 RUN_HARDWARE = true、LASER_ENABLE = false 测通 电机 + ATS 采集（采到的是无激
+…[截断，共 5312 字符]
+```
+</details>
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+Exit code 2
+awk: can't open file 06_控制程序/docs/15_C-scan复习讲义.md
+ source line number 1
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read cscan_test.m switches, parameters and conversions
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read cscan_test.m table generation, check mode, and list its sections and functions
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read docs/15 sections 2 to 5
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+=== cscan_test.m 1-140 ===
+%% C-scan：逐行扫描。行内 = bscan_test 的匀速扫描；行与行之间 = X 回程 + Y 走一步
+%
+%  原理（每张表都由 Dev1 同一个硬件时钟输出，6 条线严格同步）：
+%    行扫描表（每行都一样）：X 加速 → 匀速（每走 K 个脉冲 = DX_UM，P0.6 发一个触发 → ATS 采一条 A-line）→ 减速
+%                            这一段和 bscan_test 完全相同（400/400、ctr1 = 400 已验证，docs/13 §3.1–3.3）
+%    回程 + Y 表：停稳 → X 以 X_RETURN_SPEED 退回本行起点（不加速）→ Y 前进 DY_UM（不加速）→ 停稳
+%    退回起点表：全部扫完（或中途停止）后，按累计命令位置让 X、Y 都回到开工时的位置
+%  单向光栅：每行都朝同一个方向扫（X 是快轴，Y 是慢轴），回程不采数据。
+%  每行的步骤（docs/14 4.2）：① arm ATS → ② 行扫描表 → ③ 取数、Abort、读 ctr1 → ④ 存盘 → ⑤ 看停止按钮 → ⑥ 回程 + Y。
+%  行与行之间没有 P0.6，所以每行重新 arm 的空档不会漏触发；数据在电机再动之前就存好。
+%
+%  使用顺序
+…[截断，共 8582 字符]
+```
+</details>
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+=== cscan_test.m 140-300 ===
+    'postedBuffers 只能是 Inf 或 >= 2 的整数（SDK 指南：至少 2 个，最好 >= 3 个）。');
+nPost = min(ATS.postedBuffers, nBuf);           % 实际分配、每行一开始 Post 的 buffer 个数
+if nPost < 2
+    fprintf(2, '注意：每行只有 %d 个 buffer（SDK 建议至少 2 个）。没测过，最好让 NX >= 2 x recordsPerBuffer。\n', nPost);
+end
+if isinf(ATS.postedBuffers) && nBuf > 64
+    fprintf(2, '注意：每行要 Post %d 个 buffer；buffer 太多可能 ApiInsufficientResources，建议 postedBuffers = 4（docs/14 6.11）。\n', nBuf);
+end
+impNames = containers.Map({50, 1e6}, {'IMPEDANCE_50_OHM', 'IMPEDANCE_1M_OHM'});
+etrNames = containers.Map({5, 1}, {'ETR_5V', 'ETR_1V'});
+asser
+…[截断，共 10908 字符]
+```
+</details>
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+## 2 频率和时间都是怎么定的
+
+你只定**位置相关的两三个数**，其余都是推出来的：
+
+| 量 | 怎么来 | 10 × 10（Δx 10 µm） | B-scan 默认（Δx 5 µm） |
+|---|---|---|---|
+| 每脉冲走多远 | SR2 拨码 4000 步/转 × 导程 2 mm | 0.5 µm [实测] | 0.5 µm |
+| **扫描速度** | C 第 34 行直接设；B = Δx × 触发频率 | 4 mm/s | 5 µm × 800 Hz = 4 mm/s |
+| **步频** | 速度 ÷ 0.5 µm | 8000 Hz | 8000 Hz |
+| K（每像素几步） | Δx ÷ 0.5 µm | 20 | 10 |
+| **触发频率**（每秒 A-line 数） | 步频 ÷ K | 400 Hz | 800 Hz |
+| DO 时钟 fs | 步频 × floor(250 k ÷ 步频)：每步正好 31 行，触发间隔才是整数行 | 248 kS/s（实测没被取整） | 248 kS/s |
+| P0.6 脉宽 | round(10 µs × fs) = 2 行 | 8.06 µs | 8.06 µs |
+| ATS 采样率 / 每条点数 | 180 MS/s × 1024 点 | 5.69 µs 窗口 | 同左 |
+
+要点：
+- *
+…[截断，共 4515 字符]
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read the C-scan result section, per-row printing and the start of the hardware loop
+
+### 🤖 Claude · 2026-10-15 04:36
+
+> 🔧 Bash · description: Read cscan_replot usage, test2.m parameters and the saved-data README
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+f = '';
+if SAVE_DATA
+    f = newDataFile(cscan, OUT_DIR, 'cscan_');
+end
+plan = struct('rowTable', rowTable, 'moveMid', moveMid, 'moveLast', moveLast);
+plan.pos = pos;
+cscan = runCscan(plan, P, ATS, cscan, f);
+
+%% 9. 结果：快速检查汇总、MAP、重读（docs/14 6.1、6.3、6.4）
+if ATS_ENABLE && cscan.rowsDone > 0
+    explain('9. 结果（docs/14 6.1、6.3、6.4）', ...
+        '汇总每条 A-line 的快速检查，算 MAP；存过盘的话把文件读回来逐点比较。', ...
+        '条数、ctr1、计划位置三个数对上，才能说第 k 条记录 = 第 k 个位置；重读一致才说明存的东西能用。');
+    [cscan, MAP] = reportResult(cscan, f);
+end
+
+%% ===== 本地函数 =====
+=== printRow/reportResult ===
+function printRow(cscan, iy)
+% 每行一句（docs/14 
+…[截断，共 5554 字符]
+```
+</details>
+
+### ⚙️ 工具 · 2026-10-15 04:36
+
+<details><summary>工具输出</summary>
+
+```
+%% C-scan 重读：只用文件里的 raw 重新算 MAP 和上升沿时间，再和运行时存的值逐点比较（docs/14 6.4）
+%
+%  不调用任何采集代码，不碰硬件，别的电脑上也能跑。
+%  注意：cscan_data 不进 git（.gitignore），sync_pam 不会同步数据文件，要在别的电脑上看得自己拷过去。
+%  用法：
+%    1. 直接运行：读当前文件夹下 cscan_data 里最新的 cscan_*.mat（假数据文件叫 cscan_mock_*.mat，也会被找到）
+%    2. 先在命令行设 REPLOT_FILE = '完整路径\cscan_xxx.mat'，再运行本脚本
+%  通过：isequal(MAP)、isequal(nEdge)、isequaln(tEdge) 都是 1；MAP 图和运行时的一样。
+%  computeMAP / quickCheckRow / toVolts 是从 cscan_test.m 原样抄过来的，改一边要同时改另一边。
+
+%% 1. 选文件
+if ~exist('REPLOT_FILE', 'var') || isempty(REPLOT_FILE)
+    dataDir = fullfile(pwd, 'cscan_data');
+    d = dir(fullfile(dataDir, 'cscan_
+…[截断，共 4228 字符]
+```
+</details>
+
+### 🧑 用户 · 2026-10-15 04:38
+
+放在聊天对话里，或者做一个 PDF，我明天演示的时候可以及时的查。
+
+### 🧑 用户 · 2026-10-15 04:38
+
+两个都需要。
+
+### 🤖 Claude · 2026-10-15 04:39
+
+明白：手册既放在聊天里，也做成 PDF 带去现场。我先写成 Markdown 存进仓库（docs/16），再转 PDF。先看机器上有什么转换工具。
+
+### 🤖 Claude · 2026-10-15 04:39
+
+> 🔧 Bash · description: Check which Markdown-to-PDF tools and CJK fonts are available
+
+### ⚙️ 工具 · 2026-10-15 04:39
+
+<details><summary>工具输出</summary>
+
+```
+/opt/homebrew/bin/pandoc
+wkhtmltopdf not found
+weasyprint not found
+Google Chrome.app
+py-markdown ok
+ModuleNotFoundError: No module named 'weasyprint'
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:39
+
+用 pandoc 转 HTML、再用 Chrome 无头模式打印成 PDF 即可。先写手册。
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 Write · file_path: /Users/chenyumeng/Research-PAM/06_控制程序/docs/16_自己上手_B-scan_C-scan操作手册.md
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+File created successfully at: /Users/chenyumeng/Research-PAM/06_控制程序/docs/16_自己上手_B-scan_C-scan操作手册.md (file state is current in your context — no need to Read it back)
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:42
+
+Now convert to PDF.
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 Bash · description: Convert the manual to HTML with pandoc, print to PDF with headless Chrome, copy PDF into docs
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+[WARNING] Could not load translations for zh-CN
+  translations/zh.yaml: 
+[WARNING] The term Abstract has no translation defined.
+-rw-r--r--@ 1 chenyumeng  wheel  1240878 Oct 15 00:42 /private/tmp/claude-501/-Users-chenyumeng-Research-PAM/2bcf822a-6362-494d-8831-031585b2f5d4/scratchpad/manual.pdf
+pages: 11
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 Read · file_path: /Users/chenyumeng/Research-PAM/06_控制程序/docs/16_自己上手_B-scan_C-scan操作手册.pdf
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+pdftoppm is not installed. Install poppler-utils (e.g. `brew install poppler` or `apt-get install poppler-utils`) to enable PDF page rendering.
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 Read · file_path: /Users/chenyumeng/Research-PAM/06_控制程序/docs/16_自己上手_B-scan_C-scan操作手册.pdf
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+pdftoppm is not installed. Install poppler-utils (e.g. `brew install poppler` or `apt-get install poppler-utils`) to enable PDF page rendering.
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 Bash · description: Screenshot the HTML version to verify Chinese text and tables render
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+-rw-r--r--@ 1 chenyumeng  wheel  232138 Oct 15 00:42 /private/tmp/claude-501/-Users-chenyumeng-Research-PAM/2bcf822a-6362-494d-8831-031585b2f5d4/scratchpad/shot.png
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 Read · file_path: /private/tmp/claude-501/-Users-chenyumeng-Research-PAM/2bcf822a-6362-494d-8831-031585b2f5d4/scratchpad/shot.png
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+[图片]
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:42
+
+渲染正常（中文、表格、代码块都对）。PDF 共 11 页。现在把 PDF 发给你、提交 git，然后把手册内容贴在聊天里。
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 SendUserFile
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+1 file delivered to user.
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:42
+
+> 🔧 Bash · description: Append work log line and commit the manual and PDF
+
+### ⚙️ 工具 · 2026-10-15 04:42
+
+<details><summary>工具输出</summary>
+
+```
+55be051 2026-10-15 手册: docs/16 B-scan/C-scan 自己上手操作手册（md + pdf），演示用
+```
+</details>
+
+### 🤖 Claude · 2026-10-15 04:43
+
+PDF 已发给你，源文件和 PDF 都在 [docs/16](06_控制程序/docs/16_自己上手_B-scan_C-scan操作手册.md)，已提交（`55be051`，还没 push，记得双击 `sync_pam.command`）。下面是聊天版，和 PDF 同一套内容。
+
+---
+
+# 0　只记这 5 个公式
+
+所有频率都从**位置**推出来，你只定 2–3 个数。
+
+| # | 公式 | 默认值 | 行号 |
+|---|---|---|---|
+| ① | 每脉冲距离 = 导程 2000 µm ÷ 每转 4000 步 | **0.5 µm**（X、Y 都是）[实测] | B:36–37、C:50–51 |
+| ② | K = Δx ÷ 0.5（每像素走几步，**必须整数**） | Δx 5 → 10；Δx 10 → 20 | B:55、C:88 |
+| ③ | 步频 = 速度 ÷ 0.5 µm | 4 mm/s ↔ **8000 Hz** | B:58、C:97 |
+| ④ | 触发频率 = 步频 ÷ K | K 10 → 800 Hz；K 20 → 400 Hz | B:24 直接设；C:100 算出 |
+| ⑤ | fs = 步频 × floor(250000 ÷ 步频) | 8000 × 31 = **248 000 S/s** | B:70、C:104 |
+
+记法：**B 定触发频率（速度 = Δx × TRIG_RATE），C 定速度（触发 = 8000 ÷ K）**。两者速度都 ≤ 4 mm/s。
+
+ATS 侧：180 MS/s，每点 5.556 ns；1024 点 = 5.69 µs；门槛 code 150 → (150−128)/127 × 5 V ≈ 0.87 V；buffer 字节 = 2 × 点数 × rpb，**必须是 4096 倍数**（1024 点时 rpb 取偶数）。
+
+**成功判据：`ctr1` = 收到条数 = 计划条数**，三个数相等。
+
+# 1　时间轴（以 P0.6 上升沿为 0）[实测 10/14]
+
+| 时刻 | 事件 |
+|---|---|
+| 0 | P0.6 ↑（示波器 CH1，Top 4.3–4.5 V） |
+| +0.55 µs | G1 ↑（CH2，2.00 V，宽 5 µs）；过 0.87 V 时 ATS 开始计时 |
+| +2.56 µs | G2 ↑（CH3，1.0 V，宽 200 ns）= G1 + Delay 2 µs |
+| +8.06 µs | P0.6 ↓（2 行 ÷ 248 k） |
+
+ATS 数据里上升沿 ≈ 1.926–1.933 µs（比 2 µs 早约 70 ns 固定偏差，来源待确认）；约 2 ns 散布 = 5.556/√12 的采样量化，不是抖动。
+
+# 2　B-scan `bscan_test.m`
+
+**要改的行**：15 `RUN_HARDWARE`（跑完改回 false）、16 `LASER_ENABLE`、18 `SAVE_DATA`、19 `COUNT_CHECK`（需 USER 1 → PFI3 线）、22 `SCAN_LENGTH_UM` 2000、23 `DX_UM` 5（0.5 的整数倍）、24 `TRIG_RATE_HZ` 800、26 `RAMP_UM` 200、28 `RETURN_SPEED_MM_S` 2、37 `MAX_SPEED_MM_S` 4（别改大）、46–51 ATS（点数 1024、量程 4 V、门槛 150、`recordsPerBuffer` 50，**Nx 会被凑成它的整数倍**，第 64 行）、260–262 CH A 阻抗 / 带宽 / TRIG IN（硬编码）。
+
+**默认值怎么来**：
+```
+K = 5/0.5 = 10 → 步频 10×800 = 8000 Hz → 速度 4 mm/s ✓
+Nx = 2000/5 = 400（50 的倍数）→ 8 个 buffer，每个 2×1024×50 = 102400 B = 25×4096 ✓
+nRamp = 200/0.5 = 400 步；总行程 (800 + 4000)×0.5 = 2400 µm
+pScan = floor(250000/8000) = 31 → fs 248000；wTrig = round(10 µs×248000) = 2 行 = 8.06 µs
+```
+
+**运行**：① 准备（关 LabVIEW；当前文件夹 `…\Research-PAM\07_MATLAB`；示波器 Probe 1X、D=0；发生器三通在 CH1 AUX、CH2 是 Square、不 Recall `PAM_bscan`；KORAD 开；滑台留余量）→ ② 命令行打 5 发看 ctr1 = 5 → ③ 检查模式看三行打印 + 计划图 → ④ 改 true 跑（ATS 先 arm，再 readwrite，MATLAB 卡 2.3 s 正常）→ ⑤ 打印：`ctr1 400（应为 400）`、`采到 400 条，rail 0`、`每条 1 个沿 400/400`、`上升沿 1.926~1.933 us，标准差 ≈ 1.9 ns`、`脉冲高 1.04~1.06 V` → ⑥ 收工改回 false。
+
+**三个数不等**：ctr1 对、ATS 少 → 查 G1 → TRIG IN（CH2 Top 是不是 2 V、三通、线）；ctr1 也少 → 时序表或 PFI3 线、三通是否插在 10MHz REF；ctr1 = 0 超时 → Dev1 被占，`daqreset`；沿 ≠ 1 → 发生器 CH2 关了/Sine；rail > 0 → 量程小或 CH A 没设 50 Ω（CH3 读 2.3 V 就是）。
+
+# 3　C-scan `cscan_test.m`
+
+行内 = B 的行扫描表（`buildRowTable` C:341），行间 = 回程 + Y（`buildMoveTable` C:365）。每行 **arm → 扫 → 取数 + Abort + ctr1 → 存盘 → 看停止按钮 → 回程 + Y**；行间没有 P0.6，重新 arm 不漏。
+
+**要改的行**：20 `RUN_HARDWARE`、22 `ATS_ENABLE`（false 只动电机）、24 `SAVE_DATA`、25 `MOCK_DATA`、26 `PAUSE_BETWEEN_ROWS`、30–33 `NX/NY/DX/DY`（NX 是 rpb 倍数；X 每行 400 + NX×Δx ≤ 5000；Y (NY−1)×Δy ≤ 5000）、34 `SCAN_SPEED_MM_S` ≤ 4、37–38 回程 2 / Y 1 mm/s、40 `SETTLE_S` 0.05、51–53 Y 标定值（别动）、64 `NOTE`（每次改）、68–72 CH A 量程 / 阻抗 / 带宽 / TRIG IN（命名参数）、76 `recordsPerBuffer` 2（每行 buffer = NX/rpb，> 64 改 10）、77 `postedBuffers` Inf（数字 = ring buffer）。
+
+**默认 10×10**：K = Ky = 20；步频 8000 → 触发 400 Hz；每行 X 走 500 µm、Y 共 90 µm；每行 5 个 buffer；表算每行 0.68 s、全程 6.9 s；**实测每行 = 1.13 s + NX × 7.4 ms**（7.4 ms = 10 µm/4 mm/s 扫 2.5 ms + 10 µm/2 mm/s 回 5 ms），多出的 0.5 s 是 readwrite 启动 + arm/取数/存盘。
+
+**运行**：检查模式（看 `K = 20，fs = 248000…`、`每行 0.683 s`、假数据 `MAP(3,7) = 3.07`、`逐点核对 100/100`）→ 硬件（已验证的台架直接 10×10）。每行一句：`A-line 10/10，1 个沿 10/10，上升沿中位数 1.9290 us，脉冲高 1.04~1.05 V；ctr1 = 10；用时 1.19 s（arm/扫描/取数/存/回程+Y）`，行间中位数差 < 1 ns。结束：`完成 10/10 行…100/100…重读 isequal(raw) = 1, isequal(MAP) = 1`。
+**停止只点小窗口按钮**（行间生效、自动退回）；**不要 Ctrl+C**。出错时程序 Abort → 读 ctr1 → 存 errorMessage → 位置已知才自动退回。
+**证明行顺序**：假数据，或 PAUSE 模式下第 3 行前关 CH2 → MAP 第 3 行横暗线。
+**不碰硬件重画**：`REPLOT_FILE = '…\docs\data\cscan_1014\cscan_20261014_175112.mat'; cscan_replot`，看三个 isequal = 1。
+
+# 4　演示剧本（10 分钟）
+
+1. 示波器打 1 发：指 CH1 4.4 V、CH2 2 V/5 µs/晚 0.55 µs、CH3 1 V/200 ns/晚 2 µs。"P0.6 经发生器整形成 2 V 触发，G2 是 2 µs 后的假光声信号。"
+2. `bscan_test` 检查模式：三行打印 + 计划图。"触发按步数发，5 µm 一条，4 mm/s，800 Hz，加速段不采。"
+3. `bscan_test` 硬件：`ctr1 400 = 400/400 = 400`，包络图亮带。"发送 = 接收 = 计划。"
+4. `cscan_test` 检查模式：假数据 MAP(3,7) = 3.07。"每行单独 arm，行间无触发，存盘重读一致。"
+5. `cscan_test` 10×10：每行一句、MAP 均匀、重读 = 1、每行 1.19 s。"1.13 s + 7.4 ms/点；3×3 mm @1 µm 推算 2.1 h，瓶颈是开销和单向。"
+6. 台架被占：`cscan_replot` 读 `…175112.mat`（正常）、`…205841.mat`（第 3 行暗线）、`…210855.mat`（拔线 errorMessage）。
+7. 主动说限制：假信号、激光没接、位置是命令值、放大器 + 换能器没测。
+
+# 5　新需求改哪里
+
+| 想做 | 改 | 注意 |
+|---|---|---|
+| B 换 Δx | B:23 | K 整数；速度 = Δx × TRIG ≤ 4，同时调 B:24 |
+| B 1 µm、4 mm/s | DX 1，TRIG 4000 | K 2，fs 不变，Nx 2000 → 40 个 buffer |
+| C 换视场 | C:30–33 | 行程 ≤ 5000；NX 是 rpb 倍数；每行 buffer ≤ 64 否则 C:76 改 10 |
+| C 3×3 mm @10 µm | NX 300、NY 300、rpb 10 | 约 17 min；raw 184 MB；@1 µm 要改成只留当前行 |
+| 快于 4 mm/s | 别直接改 MAX | 先试电流（0.3 → 额定 1.7 A）和加速段 |
+| 接激光 | B:16 / C:21 = true | P0.7 与 P0.6 同时；**先确认** NPL45C 触发电平（手册 0.2–2 V vs 5 V）；Rui 在场 |
+| CH A 接放大器 | C:68 量程、C:69 阻抗（B:48、260） | 不开激光先看背景；±0.4 V 起试，rail > 0 加大 |
+| 开 20 MHz 低通 | C:70 = 1（B:261） | 看换能器带宽；Rui 估 10–35 MHz，开了削 20–35 |
+| A-line 更长 | 点数 2048 | 11.4 µs ≈ 17 mm 声程；buffer 4096×rpb 任意对齐 |
+| 门槛 | `triggerLevelCode` | V = (code−128)/127 × 量程；ETR_1V 时 150 只有 0.17 V |
+| step-and-settle | 只换 C:341 `buildRowTable` | 每像素走 K 步 → 停 → 发 P0.6 |
+| 双向扫 / 后台输出去掉 0.5 s | `buildMoveTable` / `readwrite` → `preload`+`start` | 还没写 |
+
+改完固定流程：**检查模式 → 核对 K/步频/fs/行程/时长 → 上硬件 → 三个数相等**。
+
+# 6　发生器 / 示波器
+
+G1：Square 100 kHz，2 Vpp，Offset 1 V，Burst NCycle 1，Ext，Idle Bottom，Load → 5 µs 高。G2：Square 2.5 MHz，1 Vpp，Offset 0.5 V，同上 + Delay 2 µs → 200 ns。Load 模式开路翻倍，所以 CH2 2 V、CH3 1 V 就证明两边都是 50 Ω；G1 1 V 离 0.87 V 太近会漏。
+示波器 7 步：2 V/1 V/500 mV，Probe 全 1X → D=0 → CH1 平线 WAIT → 触发 CH1 ↑ 1.4 V Normal → 1 µs/格 → 打 1 发对数。
+
+# 7　坑
+
+三通插 10MHz REF（ctr1 89/121）；CH2 变 Sine/关；Probe 2X/10X；D ≠ 0；当前文件夹是旧的；Recall `PAM_bscan`；停止窗抢焦点；`Hardware is reserved` → `clear d dq cnt; daqreset`；断点 → `dbclear all; dbcont`；5 mm/s 失步；收工忘改回 false。
+
+# 8　自测（答案在 PDF 末尾）
+
+1. B：DX 2、TRIG 2000 → K、步频、速度、fs、Nx、buffer 数？
+2. Δx 0.7 会怎样？Δx 3 呢？
+3. TRIG 1000、DX 5 → 速度？程序反应？
+4. C：速度 2、DX 10 → 触发频率？每行时间？
+5. C：50×50 @10 µm → X 行程、Y 行程、每行 buffer、全程？
+6. NX 300、rpb 2 → 什么提示？改什么？
+7. 1536 点 → rpb 取什么？窗口多长？
+8. ctr1 400 但 `Buffer 3/8 未完成`，先查哪？
+9. CH3 读 2.3 V 说明什么？
+10. 3×3 mm @1 µm → 像素数、每像素预算、现流程多久？
+
+建议今晚先把 §0 的 5 个公式和 §2.2 的默认值自己手算一遍，再做 1、4、8 三题，对一下 PDF 答案。明天现场对着 §4 剧本走，被问到就翻 §5。
+
+### 🧑 用户 · 2026-10-15 04:45
+
+可以的 能放到我的 chat里面么
+
+### 🤖 Claude · 2026-10-15 04:45
+
+已经在这个聊天里了，就是上一条回复（从「0 只记这 5 个公式」到「8 自测」），往上滚就能看到，明天也能翻。
+
+如果你指的是 **claude.ai 网页的 Project 聊天**：那边连着这个 GitHub 仓库，只要你双击 `sync_pam.command` 推上去，网页里就能直接读到 `06_控制程序/docs/16_自己上手_B-scan_C-scan操作手册.md`，在网页聊天里说一句「读 docs/16」即可。
+
+手机上现场翻的话，PDF 已经发给你了，存到手机就行。需要我再做一个可以用链接打开的网页版，说一声。
+
+### 🧑 用户 · 2026-10-15 04:46
+
+我说的不是claudecode claudechat 给我一个propmt
+
+### 🤖 Claude · 2026-10-15 04:46
+
+先双击 `sync_pam.command` 把今晚的两个提交推上去，网页 Project 才看得到 docs/16。然后把下面这段贴进 claude.ai 的 PAM Project 新对话：
+
+```
+我是 Yumeng，明天（10/16）要向导师 Rui 演示 UV-PAM 的 B-scan 和 C-scan（测试信号版），并自己讲清参数和频率怎么算。请你做我的现场查询助手和陪练，不替我做决定、不改代码。
+
+先读仓库里这几个文件（只读相关节，不要全文复述）：
+1. 06_控制程序/docs/16_自己上手_B-scan_C-scan操作手册.md —— 主依据：5 个公式、参数表（带行号）、运行步骤、演示剧本、改法、踩坑、自测题
+2. 07_MATLAB/bscan_test.m 和 07_MATLAB/cscan_test.m —— 我问某一行时，引用代码原文
+3. 06_控制程序/docs/15_C-scan复习讲义.md、docs/13_B-scan记录.md §2 §7 §8、docs/14_C-scan测试流程.md 末尾实测记录 —— 补细节
+4. 02_笔记与上下文/meeting-prep/2026-10-16_会前准备.md —— 要问 Rui 的问题 Q1–Q6
+
+规则：
+- 中文为主，保留英文术语。每个数字带单位，并标 [实测] [文件确认] [条件计算] [待确认]；标「待确认」的不当事实。
+- 我问「X 参数是什么/在哪/怎么算」时，按「定义 → 在哪一行 → 由什么决定 → 改了会怎样 → 怎么检查」回答，并给出手算过程，让我能自己重现。
+- 我问「想改成 Y」时，只指出要改哪几行、要重新算什么、有什么 assert 会拦、上硬件前先做什么，不要直接替我写整段代码。
+- 我贴打印结果或报错时，先用「ctr1 = 收到条数 = 计划条数」三个数定位是发送端、接收端还是计划的问题，再按手册 §2.4 的排查表给下一步。
+- 先出 3 道题考我（从手册 §8 或自编），等我答完再给答案和纠正；我答错就只讲断在哪一步，不展开成整门课。
+- 回答尽量短：现场我要边做边看。
+
+现在开始：先用 10 行以内总结手册 §0 的 5 个公式和默认值（Δx 5 µm、800 Hz、4 mm/s、fs 248 kS/s、10×10 C-scan 400 Hz），然后出第 1 道题。
+```
+
+说明两点：
+- 网页里读不到 PDF 的话没关系，Markdown 原件内容一样。
+- 实验室 Windows 上网页端如果说找不到文件，说明还没推送，回来双击 `sync_pam.cmd` 再试。
