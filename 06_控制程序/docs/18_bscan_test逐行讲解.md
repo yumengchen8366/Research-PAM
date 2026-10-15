@@ -2,7 +2,7 @@
 
 > 2026-10-15，Claude 应我的要求写。起因：10/15 Rui 说我对 MATLAB 不熟悉，要我能逐行讲清 `bscan_test.m`，并且自己 plot 一条 A-line。和 `17_MATLAB练习计划.md` 一起用：17 是每天的练习，18 是查的参考书，不用背。
 > 以 2026-10-15 的 bscan_test.m 为准（提交 e22cf63 及以后的版本，文件 `07_MATLAB\bscan_test.m`，共 327 行），代码改了行号会变。
-> 「默认参数下」的数字，都是在 MATLAB R2024b 里用检查模式（`RUN_HARDWARE = false`）、默认参数（`TRIG_RATE_HZ = 800`、`DX_UM = 5`，git 里提交的值）实际跑出来的；数据部分用已存的 `bscan_20261007_005104.mat`。没有碰硬件。
+> 「默认参数下」的数字，都是在 MATLAB R2024b 里用检查模式（`RUN_HARDWARE = false`）、默认参数（`TRIG_RATE_HZ = 800`、`DX_UM = 5`、`SAVE_DATA = false`，即提交 e22cf63 里的值）实际跑出来的；数据部分用已存的 `bscan_20261007_005104.mat`。没有碰硬件。
 
 ## 先看这一段
 
@@ -65,8 +65,8 @@ bscan.volts = (double(raw) / 65535 * 2 - 1) * ATS.inputRange_V;
 - 原因：触发是「走 K 步发一个」，所以**扫描速度 = DX_UM × TRIG_RATE_HZ** = 5 µm × 100000 Hz = 500 mm/s，上限是 4 mm/s。
 - 规则：**TRIG_RATE_HZ ≤ 4000 / DX_UM**。DX 5 → 800 Hz；DX 4 → 1000；DX 2 → 2000；DX 1 → 4000；DX 0.5 → 8000。
 - 改法：第 24 行改回 `TRIG_RATE_HZ      = 800;`。保持 `RUN_HARDWARE = false` 先跑检查模式，看是否打印「扫描速度 4.00 mm/s，步频 8000 Hz，触发 800 Hz」。
-- 100 kHz 在这个程序里做不到：那要 DX = 0.04 µm，比一步 0.5 µm 还小。要 100 kHz 就得换方案（docs/17 §4），要和 Rui 讨论。
-- 另外：你现在第 18 行是 `SAVE_DATA = true`（git 里是 `false`），还没提交。跑硬件时会存文件，存在「当前文件夹\bscan_data」里（第 218 行）。
+- 100 kHz 在这个程序里做不到：那要 DX = 0.04 µm，比一步 0.5 µm 还小。要 100 kHz 就得换方案（docs/17 §4、docs/19），要和 Rui 讨论。
+- 另外：第 18 行现在是 `SAVE_DATA = true`（e22cf63 里是 `false`；10/15 15:27 的同步把 `true` 和 `100e3` 一起提交了）。跑硬件时会存文件，存在「当前文件夹\bscan_data」里（第 218 行）。
 
 ### 怎么读后面的 A–G 节
 
@@ -150,7 +150,7 @@ SAVE_DATA       = true;   % true：保存到 bscan_data 文件夹
 ```
 - 在做什么：是否把结果存成 `.mat`。只在硬件模式下起作用：检查模式在第 152 行已经 `return`，走不到第 217 行。
 - 存到哪：第 218 行是 `fullfile(pwd, 'bscan_data')`。`pwd` 是 MATLAB 的「当前文件夹」，所以存在哪里取决于运行时 MATLAB 停在哪个文件夹。运行前确认当前文件夹是 `07_MATLAB`（docs/16 §2.3 第 1 步，用 `which bscan_test` 看）。文件名是 `bscan_年月日_时分秒.mat`，里面只有一个变量 `bscan`。
-- 默认参数下：git 里是 `false`。你现在的文件是 `true`，这个改动还没提交。
+- 默认参数下：e22cf63 里是 `false`。你 10/15 改成了 `true`（15:27 的同步已提交）。
 
 **第 19 行**
 ```matlab
@@ -187,7 +187,7 @@ TRIG_RATE_HZ      = 100e3;  % 激光 / 采集触发频率 = 每秒 A-line 数；
 ```
 - 在做什么：每秒发几个触发，也就是每秒采几条 A-line。它和 DX 一起决定扫描速度：**速度 = DX_UM × TRIG_RATE_HZ**。
 - 语法：`100e3` 是科学计数法，= 100 × 10³ = 100000。同理 `180e6` = 1.8 × 10⁸，`10e-6` = 10 × 10⁻⁶。
-- 默认参数下（git 里 `TRIG_RATE_HZ = 800`）：
+- 默认参数下（e22cf63 里 `TRIG_RATE_HZ = 800`）：
   - 第 58 行：stepFreq = 10 × 800 = 8000 Hz
   - 第 59 行：scanSpeed = 8000 × 0.5 / 1000 = 4 mm/s，正好等于上限，第 60 行通过
   - 第 70 行：pScan = floor(250000 / 8000) = 31 行/步；第 72 行：fs = 248000 S/s
@@ -197,7 +197,7 @@ TRIG_RATE_HZ      = 100e3;  % 激光 / 采集触发频率 = 每秒 A-line 数；
   - 就算没有这个 assert，第 70 行算出 pScan = floor(0.25) = 0，第 71 行也会停。DO 时钟最多 250 kS/s，发不出 1 MHz 的步。
 - 规则：**TRIG_RATE_HZ ≤ 4000 / DX_UM**（4000 µm/s 就是 4 mm/s），见下表。
 - 怎么让程序重新跑起来：第 24 行改回 `TRIG_RATE_HZ = 800`，或者按下表选一对 DX / TRIG，例如 DX 4 + 1000 Hz，或 DX 2 + 2000 Hz。改完先跑检查模式，看打印的「扫描速度、步频、触发」对不对。
-- 100 kHz 为什么不行：4 mm/s 下每秒采 10 万条，DX 就得是 0.04 µm，比一步 0.5 µm 还小。要做 100 kHz（激光重复频率那一类），得换另一种方案（docs/17 §4）。
+- 100 kHz 为什么不行：4 mm/s 下每秒采 10 万条，DX 就得是 0.04 µm，比一步 0.5 µm 还小。要做 100 kHz（激光重复频率那一类），得换另一种方案（docs/17 §4、docs/19）。
 - 别踩的坑：
   - DX 5 + 1000 Hz = 5 mm/s，同样停在第 60 行。
   - `TRIG_RATE_HZ = 1`（MATLAB 自动保存文件 `bscan_test.asv` 里就是这个值）能通过所有 assert，但时序有 120,383,628 行，要跑 481.5 s。`do` 占 482 MB，`double(do)` 占 3.85 GB，实际跑不了。
@@ -435,7 +435,7 @@ assert(scanSpeed <= MAX_SPEED_MM_S, '扫描速度 %.2f mm/s 超过上限，请�
   1. 第 24 行改回 `TRIG_RATE_HZ      = 800;`，或按第 24 行的表另选一组（规则 **TRIG_RATE_HZ ≤ 4000 / DX_UM**）。
   2. 保持 `RUN_HARDWARE = false`，先跑一次检查模式。
   3. 核对打印的速度和步频。
-- 100 kHz 为什么不行：DX 5 µm 就要 500 mm/s。要速度不超标，DX 得是 0.04 µm，比一步还小。删掉这个 assert 也没用：第 70 行算出 `pScan = floor(250000/1e6) = 0`，第 71 行照样停。要 100 kHz 就得换方案：触发和电机步分开（docs/17 第 72 行），这是设计问题，待和 Rui 确认。
+- 100 kHz 为什么不行：DX 5 µm 就要 500 mm/s。要速度不超标，DX 得是 0.04 µm，比一步还小。删掉这个 assert 也没用：第 70 行算出 `pScan = floor(250000/1e6) = 0`，第 71 行照样停。要 100 kHz 就得换方案：触发和电机步分开（docs/17 第 72 行、docs/19），这是设计问题，待和 Rui 确认。
 
 **第 61 行**
 ```matlab
@@ -1282,7 +1282,7 @@ fprintf('脉冲高 %.3f ~ %.3f V\n', min(max(v)), max(max(v)));
 if SAVE_DATA
 ```
 - 在做什么：只有 `SAVE_DATA = true` 才保存，到第 223 行的 `end` 结束。
-- 当前状态：git 里 `SAVE_DATA = false`；你现在第 18 行是 `true`，还没提交。检查模式到不了这里。
+- 当前状态：e22cf63 里 `SAVE_DATA = false`；现在第 18 行是 `true`。检查模式到不了这里。
 
 **第 218 行**
 ```matlab
