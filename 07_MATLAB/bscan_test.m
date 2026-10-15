@@ -15,13 +15,13 @@
 RUN_HARDWARE    = false;   % false：只生成时序并画图，不碰任何硬件
 LASER_ENABLE    = false;   % false：P0.7 不发激光触发
 RETURN_TO_START = true;    % 扫描完自动以 RETURN_SPEED 退回起点
-SAVE_DATA       = true;   % true：保存到 bscan_data 文件夹
+SAVE_DATA       = false;   % true：保存到 bscan_data 文件夹
 COUNT_CHECK     = true;    % true：用 ctr1 数 P0.6 的上升沿，需先用导线把 USER 1 端子（P0.6）并接到 PFI3 (P1.3)
 
 %% 1. 扫描参数
 SCAN_LENGTH_UM    = 2000;  % B-scan 长度
 DX_UM             = 5;     % A-line 间距（必须是 UM_PER_PULSE 的整数倍）
-TRIG_RATE_HZ      = 100e3;  % 激光 / 采集触发频率 = 每秒 A-line 数；扫描速度 = DX_UM x TRIG_RATE_HZ
+TRIG_RATE_HZ      = 800;  % 激光 / 采集触发频率 = 每秒 A-line 数；扫描速度 = DX_UM x TRIG_RATE_HZ
 DIR_SCAN          = 1;     % 扫描时 DIR 电平（1 或 0）
 RAMP_UM           = 200;   % 加速、减速各用多少距离（这段不采数据）
 START_FREQ_HZ     = 500;   % 加速起始步频

@@ -17,7 +17,7 @@
 %  以后如果行内改成 step-and-settle（docs/14 附 B），只换 buildRowTable 这一个函数，其余不变。
 %  运行前关闭 LabVIEW、Python 和其他占用 Dev1 / ATS9462 的程序；两轴先用手轮摇到行程中间（docs/14 0.4）。
 
-RUN_HARDWARE       = true; % false：只算时序、检查、画图（和假数据），不碰任何硬件
+RUN_HARDWARE       = false; % false：只算时序、检查、画图（和假数据），不碰任何硬件
 LASER_ENABLE       = false;  % false：P0.7 一直是 0
 ATS_ENABLE         = true;   % false：只动电机 + ctr1 计数，ATS 不 arm（docs/14 4.1）
 COUNT_CHECK        = true;   % true：用 ctr1 数 P0.6 的上升沿（USER 1 端子并一根线到 PFI3）
